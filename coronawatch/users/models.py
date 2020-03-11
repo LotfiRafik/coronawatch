@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
-    email = models.EmailField(unique=True,null=False,blank=False)
+    email = models.EmailField(unique=True, null=False, blank=False)
     USER_TYPE_CHOICES = (
         (0, 'admin'),
         (1, 'moderator'),
