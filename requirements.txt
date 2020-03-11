@@ -8,4 +8,36 @@ pip install markdown
 pip install django-filter  
 pip freeze
 pip install  psycopg2
+django-admin startproject coronawatch
+cd coronawatch
+settings.py:
+    add 'rest_framework','rest_framework.authtoken' to INSTALLED_APP
+    add  REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': [
+            'rest_framework.authentication.TokenAuthentication',
+        ]
+    }
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'coronawatch',
+            'USER': 'django',
+            'PASSWORD': 'rafix',
+            'HOST': 'localhost',
+            'PORT': '',
+        }
+    }
+    AUTH_USER_MODEL = 'users.User'
+
+
+POSTGRES :
+    CREATE DATABASE coronawatch;
+    CREATE USER django WITH PASSWORD 'rafix';
+    ALTER ROLE django SET client_encoding TO 'utf8';
+    GRANT ALL PRIVILEGES ON DATABASE coronawatch TO django;
+
+
+python manage.py startapp users
+pg_dump -t countries GEO | psql coronawatch postgres
 
