@@ -41,3 +41,7 @@ POSTGRES :
 python manage.py startapp users
 pg_dump -t countries GEO | psql coronawatch postgres
 
+to enable inspectdb:
+    psql coronawatch -c "GRANT ALL ON ALL TABLES IN SCHEMA public to django;"
+    psql coronawatch -c "GRANT ALL ON ALL SEQUENCES IN SCHEMA public to django;"
+    psql coronawatch -c "GRANT ALL ON ALL FUNCTIONS IN SCHEMA public to django;"
