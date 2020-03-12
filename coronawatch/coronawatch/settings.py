@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'reporting',
     'videosHomePage',
     'health',
-    
+    'robots',
+
 
 ]
 
