@@ -27,5 +27,19 @@ class Regions(models.Model):
 
 
 
-class infectedRegion(models.Model):
-    
+class infectedRegions(models.Model):
+    nb_death = models.IntegerField(default=0)
+    nb_recovered = models.IntegerField(default=0)
+    date = models.DateField(auto_now_add=True)
+    regionid = models.ForeignKey(Regions, models.DO_NOTHING, blank=True, null=True)
+    agentid = models.ForeignKey(Agent, models.DO_NOTHING, db_column='riskagentid', blank=True, null=True)
+    moderatorid = models.ForeignKey(Moderator, models.DO_NOTHING, db_column='riskmoderatorid', blank=True, null=True)
+    valide = models.BooleanField()
+
+
+class receptionCenter(models.Model):
+    name = models.CharField(max_length=255)
+    adress = models.CharField(max_length=255)
+    regionid = models.ForeignKey(Regions, models.DO_NOTHING, blank=True, null=True)
+
+

@@ -14,8 +14,7 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['user_type', 'username']
 
-
-
+ 
 class Admin(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 

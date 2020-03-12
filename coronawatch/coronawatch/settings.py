@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'users',
     'geo',
+    'articles',
+    'reporting',
+    'videosHomePage'
 
 ]
 
