@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'geo',
     'articles',
     'reporting',
-    'videosHomePage'
+    'videosHomePage',
+    'health',
+    
 
 ]
 
