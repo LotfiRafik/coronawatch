@@ -32,6 +32,7 @@ settings.py:
             'PORT': '',
         }
     }
+    
     AUTH_USER_MODEL = 'users.User'
 
 
@@ -41,9 +42,6 @@ POSTGRES :
     ALTER ROLE django SET client_encoding TO 'utf8';
     GRANT ALL PRIVILEGES ON DATABASE coronawatch TO django;
 
-
-python manage.py startapp users
-pg_dump -t countries GEO | psql coronawatch postgres
 
 to enable inspectdb:
     psql coronawatch -c "GRANT ALL ON ALL TABLES IN SCHEMA public to django;"
