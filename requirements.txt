@@ -2,12 +2,14 @@ mkdir coronawatch
 cd coronawatch
 virtuelenv -p python3 env
 source env/bin/activate
+
 pip install django
 pip install djangorestframework
 pip install markdown       
 pip install django-filter  
-pip freeze
-pip install  psycopg2
+pip install requests
+pip install psycopg2
+
 django-admin startproject coronawatch
 cd coronawatch
 settings.py:
@@ -15,9 +17,12 @@ settings.py:
     add  REST_FRAMEWORK = {
         'DEFAULT_AUTHENTICATION_CLASSES': [
             'rest_framework.authentication.TokenAuthentication',
+        ],
+        'DEFAULT_RENDERER_CLASSES': [
+            'rest_framework.renderers.JSONRenderer',
+            'rest_framework.renderers.BrowsableAPIRenderer',
         ]
     }
-
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -45,3 +50,8 @@ to enable inspectdb:
     psql coronawatch -c "GRANT ALL ON ALL TABLES IN SCHEMA public to django;"
     psql coronawatch -c "GRANT ALL ON ALL SEQUENCES IN SCHEMA public to django;"
     psql coronawatch -c "GRANT ALL ON ALL FUNCTIONS IN SCHEMA public to django;"
+
+
+Download Postman:
+    https://www.postman.com/downloads/
+
