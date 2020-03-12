@@ -1,5 +1,4 @@
-mkdir coronawatch
-cd coronawatch
+
 virtuelenv -p python3 env
 source env/bin/activate
 
@@ -10,8 +9,8 @@ pip install django-filter
 pip install requests
 pip install psycopg2
 
-django-admin startproject coronawatch
-cd coronawatch
+
+
 settings.py:
     add 'rest_framework','rest_framework.authtoken' to INSTALLED_APP
     add  REST_FRAMEWORK = {
@@ -54,4 +53,10 @@ to enable inspectdb:
 
 Download Postman:
     https://www.postman.com/downloads/
+    
+Generer documentation de l'api:
+    https://www.django-rest-framework.org/api-guide/schemas/
+    pip install pyyaml 
+    pip install uritemplate
+
 

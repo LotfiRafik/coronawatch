@@ -72,7 +72,7 @@ class UserDetail(APIView):
 
 class GoogleSign(APIView):
     def post(self, request):
-        payload = {'access_token': request.data.get("googletoken")}  # validate the token
+        payload = {'access_token': request.data.get("google_access_token")}  # validate the token
         r = requests.get('https://www.googleapis.com/oauth2/v2/userinfo', params=payload)
         data = json.loads(r.text)
         print(data)
@@ -83,16 +83,24 @@ class GoogleSign(APIView):
         # create user if not exist
         try:
             user = User.objects.get(email=data['email'])
-            response['token'] = user.auth
+            response['token'] = Token.objects.get(user=user).key
         except User.DoesNotExist:
-            user = User()
-            user.email = data['email']
             # provider random default password
-            user.password = make_password(BaseUserManager().make_random_password())
-            user.email = data['email']
-            user.user_type = 4
-            user.save()
+            user = {}
+            user['password'] = make_password(BaseUserManager().make_random_password())
+            user['email'] = data['email']
+            #only mobile user can signin with google 
+            user['user_type'] = 4
+            user['username'] = data['email']
+            serializer = UserSerializer(data=user)
+            if serializer.is_valid():
+                user = serializer.save()
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            #user.save()
             token = Token.objects.create(user=user)
-            response['token'] = token
+            response['token'] = token.key
 
         return Response(response, status=status.HTTP_200_OK)
+
+
