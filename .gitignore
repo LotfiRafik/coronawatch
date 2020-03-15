@@ -1,2 +1,4 @@
 python3env/
+__pycache__/
+.vscode/
 
