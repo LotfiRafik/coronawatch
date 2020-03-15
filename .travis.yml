@@ -9,6 +9,13 @@ install:
   - pip install django-filter  
   - pip install requests
   - pip install psycopg2
+
+
+env: DJANGO_SETTINGS_MODULE="coronawatch.settings"
+
+services:
+  - postgresql
+
  # command to run tests
 script:
   - python coronawatch/manage.py test 
