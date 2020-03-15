@@ -11,4 +11,4 @@ install:
   - pip install psycopg2
  # command to run tests
 script:
-  - python manage.py test 
+  - python coronawatch/manage.py test 
