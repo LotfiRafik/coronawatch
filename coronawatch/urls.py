@@ -21,9 +21,9 @@ from rest_framework.schemas import get_schema_view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/users/', include('users.urls')),
-    path('apidoc/', get_schema_view(
-        title="CoronaWatch",
-        description="API for all things …",
-        version="1.0.0"
-    ), name='openapi-schema'),
+    #path('apidoc/', get_schema_view(
+    #    title="CoronaWatch",
+    #    description="API for all things …",
+    #    version="1.0.0"
+    #), name='openapi-schema'),
 ]
