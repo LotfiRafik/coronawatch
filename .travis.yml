@@ -7,8 +7,12 @@ env:
 - DJANGO_SETTINGS_MODULE="coronawatch.settings"
 services:
 - postgresql
+- docker
+before_install:
+- docker-compose build .
 script:
-- python manage.py test
+- echo "Starting tests"
+- docker-compose run web sh -c "python manage.py test"
 deploy:
   provider: heroku
   api_key:

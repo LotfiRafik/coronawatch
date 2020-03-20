@@ -1,0 +1,20 @@
+version:  '3'
+
+services:
+  db:
+    image: postgres
+    container_name: db
+    network_mode: "bridge"
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  web:
+    build: .
+    network_mode: "bridge"
+    ports:
+     - "8000:8000"
+    depends_on: 
+     - db
+volumes: 
+   db_data: {}
