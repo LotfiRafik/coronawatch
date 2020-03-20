@@ -6,7 +6,7 @@ install:
 env:
   global:
   - DJANGO_SETTINGS_MODULE="coronawatch.settings"
-  - HEROKU_API_KEY="DpArSxjMgfBbBXZRwhoREmTDQcMBF2h3fN6fxR6JN5AQ7uG5MhgoWHOBY24Qs6hM+YfODweKRbK/WVPZCY7iYZ9z269JlVG+4nc2E4yAnMEerCifBT9ub5JTVQ9yVSsLRdZufT5mGBbbzoTCzbg2T2k4AwahbNo++ftFLP9MrQZlNM4ZNJdbTDpbrASH9pG8s+7lzhrzEhvvxdElarv3DaiI7Y9AWAEqu5SzItrsGbeSA/yRwBSRBdiRXLzWZsAsNG2b1yU37KG308GG6L8Sr71ErTOWPEdnH6+yFiQ4uuQKn6k1ZbnKAueADg39iwLJyttFqEO0kEWjBBqbieLejmoXtiEKZwGiA7cHwyl5T45hw5jcs9NvaSfbZQADvCjt3Gh7SNs9/XSogHjoXs6d4Fj/UsZjI246G3/5s+KO+Qd+ZWvCWFu6oiuzoXG95Byha9YxybwItShV+EKmW+V8IpQN0FHREZqWqVgh3bwAqcw2I1SNeglKdt5FeaBRZtYwW8MwhbptopWv35BgFLIZzrUkTQSXH3CZ/HvOW4oUmEBW01fi2VfFos4oSh21JnOlsH/5TQBb9NRIwpIMxM9JW6REfZlj4cE0d+cPDbJegQ4NlapNJP2uYFCAkHZuvOLNPZA0hh9O2Tw2gb399Fp9ly/ztImFr+4nwkPrXXG/rY0="
+  - HEROKU_API_KEY="aff0a1f6-1592-4f64-9e4e-5c2834fcd9c4"
   - HEROKU_PRODUCTION_APP="coronawatch"
 
 services:
@@ -17,6 +17,11 @@ before_install:
 script:
 - echo "Starting tests"
 - docker-compose run web sh -c "python manage.py test"
-- docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com;
-- docker push registry.heroku.com/$HEROKU_APP_NAME/web; 
-- docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY container:release web --app $HEROKU_PRODUCTION_APP
+deploy:
+  provider: script
+  script:
+  - docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com;
+  - docker push registry.heroku.com/$HEROKU_APP_NAME/web; 
+  - docker run --rm -e HEROKU_API_KEY=$HEROKU_API_KEY container:release web --app $HEROKU_PRODUCTION_APP
+  on:
+     branch: master
