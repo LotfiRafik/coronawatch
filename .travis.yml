@@ -23,5 +23,6 @@ deploy:
     docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com;
     heroku container:push web --app coronawatch;
     heroku container:release web --app coronawatch
+    heroku run python manage.py migrate --app coronawatch
   on:
      branch: master
