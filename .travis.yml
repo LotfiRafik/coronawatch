@@ -9,7 +9,7 @@ services:
 - postgresql
 - docker
 before_install:
-- docker-compose build .
+- docker-compose build
 script:
 - echo "Starting tests"
 - docker-compose run web sh -c "python manage.py test"
