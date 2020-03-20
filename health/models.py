@@ -12,6 +12,6 @@ class HealthInfo(models.Model):
 
 class PhotoAnalyze(models.Model):
 
-    #path = models.CharField(max_length=255)
+    path = models.CharField(max_length=255)
     date = models.DateField(auto_now_add=True)
     mobileuserid = models.ForeignKey(MobileUser, related_name='photoanalyse', on_delete=models.CASCADE)
