@@ -6,7 +6,7 @@ install:
 env:
   global:
   - DJANGO_SETTINGS_MODULE="coronawatch.settings"
-  - HEROKU_API_KEY="aff0a1f6-1592-4f64-9e4e-5c2834fcd9c4"
+  - HEROKU_API_KEY="68757907-7f23-4219-83d8-4edf6b94a13d"
   - HEROKU_APP_APP="coronawatch"
 
 services:
@@ -14,7 +14,7 @@ services:
 - docker
 before_install:
 - psql -c 'create database coronawatch;' -U postgres
-#- docker-compose build
+- docker-compose build
 script:
 - echo "Starting tests"
 - python manage.py test
