@@ -100,7 +100,7 @@ WSGI_APPLICATION = 'coronawatch.wsgi.application'
 # Heroku: Update database configuration from $DATABASE_URL. 
 ON_HEROKU = os.environ.get('ON_HEROKU')
 if not ON_HEROKU:
-    DATABASE_URL=postgres://postgres:postgres@localhost:5432/coronawatch
+    DATABASE_URL="postgres://postgres:postgres@localhost:5432/coronawatch"
 
 DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 #DATABASES = {}
