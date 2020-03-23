@@ -6,7 +6,6 @@ from rest_framework import status
 from rest_framework.utils import json
 import requests
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.schemas.openapi import AutoSchema
 from .models import PhotoAnalyze
 from .serializers import PhotoAnalyzeSerializer
 import os
@@ -21,7 +20,6 @@ class PhotoAnalyzeList(APIView):
     List all photos that users have send to the Server to be analyzed, or create a new user.
     """
 
-    #schema = AutoSchema(operation_id_base="PhotoAnalyze")
     #permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):

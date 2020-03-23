@@ -3,7 +3,7 @@ from .models import PhotoAnalyze
 
 
 class PhotoAnalyzeSerializer(serializers.ModelSerializer):
-    #date = serializers.ReadOnlyField
+    date = serializers.ReadOnlyField
 
     class Meta:
         model = PhotoAnalyze
