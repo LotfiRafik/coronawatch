@@ -18,7 +18,7 @@ before_install:
 script:
 - echo "Starting tests"
 - python manage.py test
-#- docker-compose run web sh -c "python manage.py test"
+- docker-compose run web sh -c "python manage.py test"
 deploy:
   provider: script
   script:
