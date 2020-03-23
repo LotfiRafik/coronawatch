@@ -14,6 +14,11 @@ import os
 import dj_database_url
 import django_heroku
 import dotenv
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -52,6 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'cloudinary',
     'users',
     'geo',
     'articles',
@@ -98,9 +104,13 @@ WSGI_APPLICATION = 'coronawatch.wsgi.application'
 
 
 # Heroku: Update database configuration from $DATABASE_URL. 
+ON_HEROKU = os.environ.get('ON_HEROKU')
+if not ON_HEROKU:
+    DATABASE_URL=postgres://postgres:postgres@localhost:5432/coronawatch
 
-DATABASES = {}
-DATABASES['default'] = dj_database_url.config(conn_max_age=600)
+DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
+#DATABASES = {}
+#DATABASES['default'] = dj_database_url.config(conn_max_age=600)
 
 
 # Password validation
@@ -170,5 +180,10 @@ REST_FRAMEWORK = {
 
 # Activate Django-Heroku.
 django_heroku.settings(locals())
-#del DATABASES['default']['OPTIONS']['sslmode']
+del DATABASES['default']['OPTIONS']['sslmode']
 
+cloudinary.config( 
+  cloud_name = "coronawatch", 
+  api_key = "149641157741392", 
+  api_secret = "KgP6a1XyiRDVaKNdGZsPQicbzm4" 
+)

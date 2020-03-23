@@ -12,7 +12,7 @@ from articles.models import Article,commentArticle
 from users.models import Redactor,User
 from articles.serializers import ArticleSerializer
 
-# Create your tests here.
+#Create your tests here.
 class NewArticleTestCase(APITestCase):
     def setUp(self):
         self.user1 = User(email="test@test333.com",user_type=3,username="red")
@@ -27,7 +27,8 @@ class NewArticleTestCase(APITestCase):
             moderatorid=self.user2.moderator,
             valide="False"
             )
-       
+        
+
 
     def testCreation(self):
         data={"title": "TestCase",
@@ -44,6 +45,7 @@ class NewArticleTestCase(APITestCase):
 
     def testArticleListGet(self):
          response=self.client.get('/api/article/')
+         print(response)
          self.assertEqual(response.status_code,status.HTTP_200_OK)
     
     

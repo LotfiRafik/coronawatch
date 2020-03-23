@@ -82,7 +82,6 @@ class AdminSign(APIView):
 
 
 
-
 class UsersList(APIView):
     """
     List all users, or create a new user.

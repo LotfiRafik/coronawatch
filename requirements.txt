@@ -11,3 +11,5 @@ dj_database_url
 markdown
 whitenoise
 python-dotenv
+Pillow
+cloudinary

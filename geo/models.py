@@ -1,14 +1,14 @@
 from django.db import models
 from users.models import Agent, Moderator
-# Create your models here.
+#Create your models here.
 
 class Countries(models.Model):
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=10)
 
-    class Meta:
-        managed = False
-        db_table = 'countries'
+    # class Meta:
+    #     managed = False
+    #     db_table = 'countries'
 
 
 class Regions(models.Model):
@@ -21,9 +21,9 @@ class Regions(models.Model):
     riskmoderatorid = models.ForeignKey(Moderator, models.DO_NOTHING, db_column='riskmoderatorid', blank=True, null=True)
     riskvalide = models.BooleanField()
 
-    class Meta:
-        managed = False
-        db_table = 'regions'
+    # class Meta:
+    #     managed = False
+    #     db_table = 'regions'
 
 
 

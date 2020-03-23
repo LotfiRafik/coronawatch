@@ -1,5 +1,8 @@
 from django.db import models
 from users.models import MobileUser
+from cloudinary.models import CloudinaryField
+
+
 # Create your models here.
 class HealthInfo(models.Model):
     
@@ -11,7 +14,9 @@ class HealthInfo(models.Model):
 
 
 class PhotoAnalyze(models.Model):
-
-    path = models.CharField(max_length=255)
+    #path = models.CharField(max_length=255)
+    photo = models.FileField(null=True)
+    #photo = models.ImageField(upload_to="health/PhotoAnalyze/", null=True)
     date = models.DateField(auto_now_add=True)
     mobileuserid = models.ForeignKey(MobileUser, related_name='photoanalyse', on_delete=models.CASCADE)
+
