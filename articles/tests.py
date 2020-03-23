@@ -15,10 +15,8 @@ from articles.serializers import ArticleSerializer
 # Create your tests here.
 class NewArticleTestCase(APITestCase):
     def setUp(self):
-        self.user1 = User(email="test@test333.com",user_type=3,username="red")
-        self.user1.save()
-        self.user2 = User(email="test@test.com",user_type=1,username="mod")
-        self.user2.save()
+        self.user1 = User.objects.create(email="test@test333.com",user_type=3,username="red")
+        self.user2 = User.objects.create(email="test@test.com",user_type=1,username="mod")
         Article.objects.create(
             title='TestCase',
             content="Wearetestingamethodpost",
@@ -53,14 +51,10 @@ class NewArticleTestCase(APITestCase):
 
 class NewCommentArticleTestCase(APITestCase):
     def setUp(self):
-        self.user1 = User(email="test@test333.com",user_type=3,username="red")
-        self.user1.save()
-        self.user2 = User(email="test@test.com",user_type=1,username="mod")
-        self.user2.save()
-        self.user3 = User(email="test@test3.com",user_type=4,username="mob")
-        self.user3.save()
-        self.article=Article(title='TestCase', content="Wearetestingamethodpost",date="2020-03-23", redactor=self.user1.redactor, moderatorid=self.user2.moderator,valide="False")
-        self.article.save()
+        self.user1 = User.objects.create(email="test@test333.com",user_type=3,username="red")
+        self.user2 = User.objects.create(email="test@test.com",user_type=1,username="mod")
+        self.user3 = User.objects.create(email="test@test3.com",user_type=4,username="mob")
+        self.article=Article.objects.create(title='TestCase', content="Wearetestingamethodpost",date="2020-03-23", redactor=self.user1.redactor, moderatorid=self.user2.moderator,valide="False")
         commentArticle.objects.create(
             content="Wearetestingamethodpost",
             date="2020-03-23",
