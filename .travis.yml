@@ -14,10 +14,11 @@ services:
 - docker
 before_install:
 - psql -c 'create database coronawatch;' -U postgres
-- docker-compose build
+#- docker-compose build
 script:
 - echo "Starting tests"
-- docker-compose run web sh -c "python manage.py test"
+- python manage.py test
+#- docker-compose run web sh -c "python manage.py test"
 deploy:
   provider: script
   script:
