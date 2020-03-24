@@ -40,7 +40,7 @@ class NewArticleTestCase(APITestCase):
         token = Token.objects.get(user=self.user1).key
         header = {}
         header['Authorization'] = "Token "+ str(token)
-        response=self.client.post('/api/article/new/',data,format='json', HTTP_AUTHORIZATION=header['Authorization'])
+        response=self.client.post('/api/article/new/', data, HTTP_AUTHORIZATION=header['Authorization'])
         self.assertEqual(response.status_code,status.HTTP_201_CREATED)
 
 
