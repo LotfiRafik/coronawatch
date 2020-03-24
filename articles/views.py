@@ -12,6 +12,8 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 from django.http import Http404
+import time
+
 
 
 
@@ -34,11 +36,14 @@ class NewArticle(APIView):
   permission_classes = [IsAuthenticated, RedactorOnly]
 
   def post(self,request):
+    print(request.POST)
     #We cant modify directly request.data so we copy it
-    data = request.data.copy()
+    data = request.POST.copy()
+    print("feeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeocokxkx886ae66ae56")
     #Id of the redactor 
     data['redactor'] = request.user.redactor.id
     data['valide'] = False
+    print(data)
     serializer=ArticleSerializer(data=data)
     if not serializer.is_valid():
       print(serializer.errors)
@@ -46,21 +51,23 @@ class NewArticle(APIView):
 
     #Save article in database
     article = serializer.save()
-
+    print("eeeeeeeeeffezpoffpzepoxxx")
     #Upload attachments to the cloud
     for f in request.FILES.getlist('attachments'):
       try:
         extension = str(f).split(".")[1].lower()
+        timm = time.time()
         print(extension)
         if extension in ['jpg', 'jpeg', 'png', 'gif']:
           at_type = "photo"
           out = cloudinary.uploader.upload(f, folder="articles")
         elif extension in ['mp4']:
           at_type = "video"
-          out = cloudinary.uploader.upload(f, ressouce_type='video', folder="articles")
+          out = cloudinary.uploader.upload(f, resource_type = "video", folder="articles")
       except cloudinary.exceptions.Error:
         print(cloudinary.exceptions.Error)
         return Response(cloudinary.exceptions.Error, status=status.HTTP_400_BAD_REQUEST)
+      print(str(time.time()-timm) + "seconds")
       attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
 
     serializer=ArticleSerializer(article)
