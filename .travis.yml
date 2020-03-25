@@ -6,7 +6,7 @@ install:
 env:
   global:
   - DJANGO_SETTINGS_MODULE="coronawatch.settings"
-  - HEROKU_API_KEY="68757907-7f23-4219-83d8-4edf6b94a13d"
+  - HEROKU_API_KEY="1e9ad3f4-8875-4f62-bae8-424b643ce1c0"
   - HEROKU_APP_APP="coronawatch"
 
 services:
