@@ -12,7 +12,10 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 from django.http import Http404
-#import time
+import django_rq
+from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
+import shutil
+import time
 
 
 
@@ -44,29 +47,48 @@ class NewArticle(APIView):
     serializer=ArticleSerializer(data=data)
     if not serializer.is_valid():
       print(serializer.errors)
-      return Response(serializer.errors, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     #Save article in database
     article = serializer.save()
     #Upload attachments to the cloud
     for f in request.FILES.getlist('attachments'):
-      try:
-        extension = str(f).split(".")[1].lower()
-        #timm = time.time()
-        if extension in ['jpg', 'jpeg', 'png', 'gif']:
-          at_type = "photo"
-          out = cloudinary.uploader.upload(f, folder="articles")
-        elif extension in ['mp4']:
-          at_type = "video"
-          out = cloudinary.uploader.upload(f, resource_type = "video", folder="articles")
-      except cloudinary.exceptions.Error:
-        print(cloudinary.exceptions.Error)
-        return Response(cloudinary.exceptions.Error, status=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
-      #print(str(time.time()-timm) + "seconds")
-      attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
-
-    serializer=ArticleSerializer(article)
+      #if file is TemporaryUploadFile type , we pass the path 
+      if isinstance(f, TemporaryUploadedFile):
+        f = f.temporary_file_path()
+        #Create temp folder to store the file before script end and the file get deleted
+        if not os.path.exists('tmp/'):
+          os.makedirs('tmp/')
+        shutil.copyfile(f, f[1:])
+        f = f[1:]
+      django_rq.enqueue(upload_file_cloudinary, f, article)
+      #result = q.enqueue(upload_file_cloudinary,f,article.id)
+    serializer = ArticleSerializer(article)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+#upload image or video to cloud
+#update database (attachement_table)
+def upload_file_cloudinary(f,article):
+  at_type = ""
+  try:
+    extension = str(f).split(".")[1].lower()
+    if str(f).lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+      at_type = "photo"
+      out = cloudinary.uploader.upload(f, folder="articles")
+    elif str(f).lower().endswith(('.mp4')):
+      at_type = "video"
+      out = cloudinary.uploader.upload(f, resource_type = "video", folder="articles")
+  except cloudinary.exceptions.Error:
+    print(cloudinary.exceptions.Error)
+    return Response(cloudinary.exceptions.Error, status=status.HTTP_400_BAD_REQUEST)
+  attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
+  #Remove file from tmp folder 
+  if os.path.exists(f):
+    os.remove(f)
+  return 0
+
 
 
 class ValidateArticle(APIView):
