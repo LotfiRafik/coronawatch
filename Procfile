@@ -1,2 +1,2 @@
 web: gunicorn coronawatch.wsgi --log-file -
-worker: python coronawatch/manage.py rqworker high default low
+worker: python manage.py rqworker high default low
