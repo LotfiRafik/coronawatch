@@ -41,7 +41,7 @@ SECRET_KEY = '79sm2kiumh8)w#aj=!6ptd#u(n3-i&_%v$40+44ht)fc10dt!&'
 DEBUG = bool(os.environ.get("DEBUG_DJANGO"))
 
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','deploycorona.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','coronawatch.herokuapp.com']
 
 
 
