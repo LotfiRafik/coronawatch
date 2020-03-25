@@ -3,6 +3,7 @@ For each app create new branch :
 	git checkout app_name
 	git add -A
 	git commit -m ".."
+	
 	git push origin app_name
 	
 
