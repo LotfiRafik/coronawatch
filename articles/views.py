@@ -42,12 +42,12 @@ class NewArticle(APIView):
     #We cant modify directly request.data so we copy it
     data = {}
     print ("11111111111111111111111111") # python 3
-    sys.stdout.flush()
+    #sys.stdout.flush()
     #data = request.POST.copy()
     data['title'] = request.POST['title']
     data['content'] = request.POST['content']
     print ("22222222222222222222222") # python 3
-    sys.stdout.flush()
+    #sys.stdout.flush()
     #Id of the redactor 
     data['redactor'] = request.user.redactor.id
     data['valide'] = False
