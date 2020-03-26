@@ -16,7 +16,7 @@ import django_rq
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 import shutil
 import time
-
+import sys
 
 
 
@@ -40,7 +40,14 @@ class NewArticle(APIView):
 
   def post(self,request):
     #We cant modify directly request.data so we copy it
-    data = request.POST.copy()
+    data = {}
+    print ("11111111111111111111111111") # python 3
+    #sys.stdout.flush()
+    #data = request.POST.copy()
+    data['title'] = request.POST['title']
+    data['content'] = request.POST['content']
+    print ("22222222222222222222222") # python 3
+    #sys.stdout.flush()
     #Id of the redactor 
     data['redactor'] = request.user.redactor.id
     data['valide'] = False
@@ -48,20 +55,29 @@ class NewArticle(APIView):
     if not serializer.is_valid():
       print(serializer.errors)
       return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    print ("3333333333333333333333333333333333") # python 3
+    sys.stdout.flush()
     #Save article in database
     article = serializer.save()
+    print ("4444444444444444444444444") # python 3
+    sys.stdout.flush()
     #Upload attachments to the cloud
     for f in request.FILES.getlist('attachments'):
       #if file is TemporaryUploadFile type , we pass the path 
+      print ("555555555555555555555") # python 3
+      sys.stdout.flush()
       if isinstance(f, TemporaryUploadedFile):
         f = f.temporary_file_path()
         #Create temp folder to store the file before script end and the file get deleted
-        if not os.path.exists('tmp/'):
-          os.makedirs('tmp/')
-        shutil.copyfile(f, f[1:])
-        f = f[1:]
+        #if not os.path.exists('tmp/'):
+          #os.makedirs('tmp/')
+        #shutil.copyfile(f, f[1:])
+        #f = f[1:]
+        print ("6666666666666666666666666") # python 3
+        sys.stdout.flush()
       django_rq.enqueue(upload_file_cloudinary, f, article)
+    print ("777777777777777777777777777") # python 3
+    sys.stdout.flush()
     return Response({'url':'https://coronawatch.herokuapp.com/api/article/detail/'+str(article.id)+'/'}, status=status.HTTP_201_CREATED)
 
 
@@ -69,19 +85,19 @@ class NewArticle(APIView):
 #upload image or video to cloud
 #update database (attachement_table)
 def upload_file_cloudinary(f,article):
-  # at_type = ""
-  # try:
-  #   extension = str(f).split(".")[1].lower()
-  #   if str(f).lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
-  #     at_type = "photo"
-  #     out = cloudinary.uploader.upload(f, folder="articles")
-  #   elif str(f).lower().endswith(('.mp4')):
-  #     at_type = "video"
-  #     out = cloudinary.uploader.upload(f, resource_type = "video", folder="articles")
-  # except cloudinary.exceptions.Error:
-  #   print(cloudinary.exceptions.Error)
-  #   return Response(cloudinary.exceptions.Error, status=status.HTTP_400_BAD_REQUEST)
-  # attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
+  at_type = ""
+  try:
+    extension = str(f).split(".")[1].lower()
+    if str(f).lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+      at_type = "photo"
+      out = cloudinary.uploader.upload(f, folder="articles")
+    elif str(f).lower().endswith(('.mp4')):
+      at_type = "video"
+      #out = cloudinary.uploader.upload(f, resource_type = "video", folder="articles")
+  except cloudinary.exceptions.Error:
+    print(cloudinary.exceptions.Error)
+    return Response(cloudinary.exceptions.Error, status=status.HTTP_400_BAD_REQUEST)
+  #attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
   #Remove file from tmp folder 
   if os.path.exists(f):
     os.remove(f)
