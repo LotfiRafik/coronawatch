@@ -1,2 +1,2 @@
 web: gunicorn coronawatch.wsgi --log-file -
-worker:
+worker: python manage.py check
