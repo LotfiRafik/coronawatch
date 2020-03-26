@@ -63,10 +63,11 @@ class NewArticle(APIView):
           print ("tmp/ doesnt exist")
           sys.stdout.flush()
           os.makedirs('tmp/')
-          if os.path.exists('tmp/'):
-            print("tmp/ created")
         shutil.copyfile(f, f[1:])
         f = f[1:]
+        os.listdir("tmp/")
+        if os.path.isfile(f):
+          print("file exist on system")
       django_rq.enqueue(upload_file_cloudinary, f, article)
     return Response({'url':'https://coronawatch.herokuapp.com/api/article/detail/'+str(article.id)+'/'}, status=status.HTTP_201_CREATED)
 
@@ -75,25 +76,24 @@ class NewArticle(APIView):
 #upload image or video to cloud
 #update database (attachement_table)
 def upload_file_cloudinary(f,article):
-  # at_type = ""
-  # try:
-  #   extension = str(f).split(".")[1].lower()
-  #   if str(f).lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
-  #     at_type = "photo"
-  #     out = cloudinary.uploader.upload(f, folder="articles")
-  #     attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
-  #   elif str(f).lower().endswith(('.mp4')):
-  #     at_type = "video"
-  #     out = cloudinary.uploader.upload(f, resource_type = "video", folder="articles")
-  #     attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
-  #     #Remove file from tmp folder 
-  #     if os.path.exists(f):
-  #       os.remove(f)
-  # except cloudinary.exceptions.Error:
-  #   print(cloudinary.exceptions.Error)
-  #   return Response(cloudinary.exceptions.Error, status=status.HTTP_400_BAD_REQUEST)
-
-  return 0
+   at_type = ""
+   try:
+     extension = str(f).split(".")[1].lower()
+     if str(f).lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+       at_type = "photo"
+       out = cloudinary.uploader.upload(f, folder="articles")
+       attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
+     elif str(f).lower().endswith(('.mp4')):
+       at_type = "video"
+       out = cloudinary.uploader.upload(f, resource_type = "video", folder="articles")
+       attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
+       #Remove file from tmp folder 
+       if os.path.exists(f):
+         os.remove(f)
+   except cloudinary.exceptions.Error:
+     print(cloudinary.exceptions.Error)
+     return Response(cloudinary.exceptions.Error, status=status.HTTP_400_BAD_REQUEST)
+   return 0
 
 
 
