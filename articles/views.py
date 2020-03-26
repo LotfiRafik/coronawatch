@@ -57,10 +57,10 @@ class NewArticle(APIView):
       if isinstance(f, TemporaryUploadedFile):
         f = f.temporary_file_path()
         #Create temp folder to store the file before script end and the file get deleted
-        if not os.path.exists('tmp/'):
-          os.makedirs('tmp/')
-        shutil.copyfile(f, f[1:])
-        f = f[1:]
+        #if not os.path.exists('tmp/'):
+          #os.makedirs('tmp/')
+        #shutil.copyfile(f, f[1:])
+        #f = f[1:]
       django_rq.enqueue(upload_file_cloudinary, f, article)
     return Response({'url':'https://coronawatch.herokuapp.com/api/article/detail/'+str(article.id)+'/'}, status=status.HTTP_201_CREATED)
 
