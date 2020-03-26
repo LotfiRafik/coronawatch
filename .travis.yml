@@ -34,5 +34,4 @@ deploy:
   app:
     master: coronawatch
   # run:
-  #   - "python manage.py migrate"
-  #   - "python manage.py rqworker high default low"
+      - "python manage.py migrate"
