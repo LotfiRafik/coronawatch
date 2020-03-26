@@ -62,7 +62,6 @@ class NewArticle(APIView):
         shutil.copyfile(f, f[1:])
         f = f[1:]
       django_rq.enqueue(upload_file_cloudinary, f, article)
-    sys.stdout.flush()
     return Response({'url':'https://coronawatch.herokuapp.com/api/article/detail/'+str(article.id)+'/'}, status=status.HTTP_201_CREATED)
 
 
