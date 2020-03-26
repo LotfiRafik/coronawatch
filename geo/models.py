@@ -38,7 +38,7 @@ class infectedRegions(models.Model):
 
 
 class receptionCenter(models.Model):
-    #name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     adress = models.CharField(max_length=255)
     regionid = models.ForeignKey(Regions, models.DO_NOTHING, blank=True, null=True)
 

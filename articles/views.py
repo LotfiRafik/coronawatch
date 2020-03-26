@@ -62,7 +62,6 @@ class NewArticle(APIView):
         shutil.copyfile(f, f[1:])
         f = f[1:]
       django_rq.enqueue(upload_file_cloudinary, f, article)
-    sys.stdout.flush()
     return Response({'url':'https://coronawatch.herokuapp.com/api/article/detail/'+str(article.id)+'/'}, status=status.HTTP_201_CREATED)
 
 
@@ -76,16 +75,18 @@ def upload_file_cloudinary(f,article):
     if str(f).lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
       at_type = "photo"
       out = cloudinary.uploader.upload(f, folder="articles")
+      attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
     elif str(f).lower().endswith(('.mp4')):
       at_type = "video"
-      #out = cloudinary.uploader.upload(f, resource_type = "video", folder="articles")
+      out = cloudinary.uploader.upload(f, resource_type = "video", folder="articles")
+      attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
+      #Remove file from tmp folder 
+      if os.path.exists(f):
+        os.remove(f)
   except cloudinary.exceptions.Error:
     print(cloudinary.exceptions.Error)
     return Response(cloudinary.exceptions.Error, status=status.HTTP_400_BAD_REQUEST)
-  #attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
-  #Remove file from tmp folder 
-  if os.path.exists(f):
-    os.remove(f)
+
   return 0
 
 
