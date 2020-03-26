@@ -40,7 +40,7 @@ class NewArticle(APIView):
 
   def post(self,request):
     #We cant modify directly request.data so we copy it
-    
+    data = {}
     print ("11111111111111111111111111") # python 3
     sys.stdout.flush()
     #data = request.POST.copy()
