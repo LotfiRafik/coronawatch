@@ -43,7 +43,9 @@ class NewArticle(APIView):
     
     print ("11111111111111111111111111") # python 3
     sys.stdout.flush()
-    data = request.POST.copy()
+    #data = request.POST.copy()
+    data['title'] = request.POST['title']
+    data['content'] = request.POST['content']
     print ("22222222222222222222222") # python 3
     sys.stdout.flush()
     #Id of the redactor 
