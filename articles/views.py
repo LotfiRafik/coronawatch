@@ -69,19 +69,19 @@ class NewArticle(APIView):
 #upload image or video to cloud
 #update database (attachement_table)
 def upload_file_cloudinary(f,article):
-  at_type = ""
-  try:
-    extension = str(f).split(".")[1].lower()
-    if str(f).lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
-      at_type = "photo"
-      out = cloudinary.uploader.upload(f, folder="articles")
-    elif str(f).lower().endswith(('.mp4')):
-      at_type = "video"
-      out = cloudinary.uploader.upload(f, resource_type = "video", folder="articles")
-  except cloudinary.exceptions.Error:
-    print(cloudinary.exceptions.Error)
-    return Response(cloudinary.exceptions.Error, status=status.HTTP_400_BAD_REQUEST)
-  attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
+  # at_type = ""
+  # try:
+  #   extension = str(f).split(".")[1].lower()
+  #   if str(f).lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+  #     at_type = "photo"
+  #     out = cloudinary.uploader.upload(f, folder="articles")
+  #   elif str(f).lower().endswith(('.mp4')):
+  #     at_type = "video"
+  #     out = cloudinary.uploader.upload(f, resource_type = "video", folder="articles")
+  # except cloudinary.exceptions.Error:
+  #   print(cloudinary.exceptions.Error)
+  #   return Response(cloudinary.exceptions.Error, status=status.HTTP_400_BAD_REQUEST)
+  # attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
   #Remove file from tmp folder 
   if os.path.exists(f):
     os.remove(f)
