@@ -17,3 +17,4 @@ Generer documentation de l'api:
 
 Resolving a merge conflict using the command line:
 	https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/resolving-a-merge-conflict-using-the-command-line
+
