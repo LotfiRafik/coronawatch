@@ -8,4 +8,5 @@ RUN mkdir /code
 WORKDIR /code
 COPY . /code/
 RUN pip install -r requirements.txt
+RUN python manage.py rqworker high default low
 CMD gunicorn coronawatch.wsgi:application --bind 0.0.0.0:$PORT
