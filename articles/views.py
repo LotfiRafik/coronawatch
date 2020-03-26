@@ -77,11 +77,11 @@ def upload_file_cloudinary(f,article):
       out = cloudinary.uploader.upload(f, folder="articles")
     elif str(f).lower().endswith(('.mp4')):
       at_type = "video"
-      out = cloudinary.uploader.upload(f, resource_type = "video", folder="articles")
+      #out = cloudinary.uploader.upload(f, resource_type = "video", folder="articles")
   except cloudinary.exceptions.Error:
     print(cloudinary.exceptions.Error)
     return Response(cloudinary.exceptions.Error, status=status.HTTP_400_BAD_REQUEST)
-  attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
+  #attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
   #Remove file from tmp folder 
   if os.path.exists(f):
     os.remove(f)
