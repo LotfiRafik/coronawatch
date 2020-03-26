@@ -3,7 +3,6 @@ For each app create new branch :
 	git checkout app_name
 	git add -A
 	git commit -m ".."
-	
 	git push origin app_name
 	
 
@@ -16,6 +15,6 @@ Download Postman:
 Generer documentation de l'api:
 	https://www.django-rest-framework.org/api-guide/schemas/
 
-
 Resolving a merge conflict using the command line:
 	https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/resolving-a-merge-conflict-using-the-command-line
+
