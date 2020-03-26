@@ -1,2 +1,2 @@
-web: gunicorn coronawatch.wsgi --log-file -
+web: gunicorn coronawatch.wsgi --timeout 1000000 --log-file -
 release: python manage.py migrate

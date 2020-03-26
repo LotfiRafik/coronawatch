@@ -8,4 +8,4 @@ RUN mkdir /code
 WORKDIR /code
 COPY . /code/
 RUN pip install -r requirements.txt
-CMD gunicorn coronawatch.wsgi:application --bind 0.0.0.0:$PORT;python manage.py migrate
+CMD gunicorn coronawatch.wsgi:application --bind 0.0.0.0:$PORT --timeout 1000000
