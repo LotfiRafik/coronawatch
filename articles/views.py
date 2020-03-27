@@ -12,7 +12,6 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 from django.http import Http404
-import django_rq
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 import shutil
 import time
@@ -55,20 +54,8 @@ class NewArticle(APIView):
     for f in request.FILES.getlist('attachments'):
       #if file is TemporaryUploadFile type , we pass the path 
       if isinstance(f, TemporaryUploadedFile):
-        print ("is instance of Temprary Uploaded File")
-        sys.stdout.flush()
         f = f.temporary_file_path()
-        #Create temp folder to store the file before script end and the file get deleted
-        if not os.path.exists('tmp/'):
-          print ("tmp/ doesnt exist")
-          sys.stdout.flush()
-          os.makedirs('tmp/')
-        shutil.copyfile(f, f[1:])
-        f = f[1:]
-        print(os.listdir("tmp/"))
-        if os.path.isfile(f):
-          print("file exist on system")
-      django_rq.enqueue(upload_file_cloudinary, f, article)
+      upload_file_cloudinary(f, article)
     return Response({'url':'https://coronawatch.herokuapp.com/api/article/detail/'+str(article.id)+'/'}, status=status.HTTP_201_CREATED)
 
 
@@ -76,12 +63,6 @@ class NewArticle(APIView):
 #upload image or video to cloud
 #update database (attachement_table)
 def upload_file_cloudinary(f,article):
-  if not os.path.exists('tmp/'):
-    print ("tmp/ doesnt exist")
-  else:
-    print(os.listdir("tmp/"))
-  print("first funct")
-  print(str(f).lower)
   at_type = ""
   try:
     extension = str(f).split(".")[1].lower()
@@ -90,14 +71,9 @@ def upload_file_cloudinary(f,article):
       out = cloudinary.uploader.upload(f, folder="articles")
       attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
     elif str(f).lower().endswith(('.mp4')):
-      print("video type")
       at_type = "video"
       out = cloudinary.uploader.upload(f, resource_type = "video", folder="articles")
-      print("done uploading to cloudniyry")
       attachmentArticle.objects.create(attachment_type=at_type, path=out['url'],articleid=article)
-      #Remove file from tmp folder 
-      if os.path.exists(f):
-        os.remove(f)
   except cloudinary.exceptions.Error:
     print(cloudinary.exceptions.Error)
     return Response(cloudinary.exceptions.Error, status=status.HTTP_400_BAD_REQUEST)
