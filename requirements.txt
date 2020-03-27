@@ -13,5 +13,3 @@ whitenoise
 python-dotenv
 Pillow
 cloudinary
-rq
-django-rq
