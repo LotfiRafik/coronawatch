@@ -11,10 +11,10 @@ env:
 
 services:
 - postgresql
-- docker
+#- docker
 before_install:
 - psql -c 'create database coronawatch;' -U postgres
-- docker-compose build
+#- docker-compose build
 script:
 - echo "Starting tests"
 - python manage.py test

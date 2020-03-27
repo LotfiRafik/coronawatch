@@ -32,7 +32,8 @@ class OwnerOnly(BasePermission):
 class OwnerOrModerator(BasePermission):
 
     def has_object_permission(self, request, view, obj):
-        return(request.user.user_type == 1 or obj == request.user)
+        valide = request.user.is_authenticated
+        if valide:
+            return(request.user.user_type == 1 or obj == request.user)
+        return False
 
-
-        

@@ -109,7 +109,13 @@ class ArtcileDetail(APIView):
   
     def get_object(self, id):
       try:
-        return Article.objects.get(id=id)
+        article = Article.objects.get(id=id)
+        #only the moderator who can see non validated articles 
+        if article.valide == False:
+          if request.user.is_authenticated and request.user.user_type == 1:
+            return article
+          else:
+            raise Http404
       except Article.DoesNotExist:
         raise Http404
 
@@ -127,13 +133,15 @@ class ArtcileDetail(APIView):
 
 class NewCommentArticle(APIView):  
     permission_classes = [IsAuthenticated, MobileUserOnly]
-
+    
     def get_object(self, id):
       try:
-        return Article.objects.get(id=id)
+        article = Article.objects.get(id=id)
+        #article non validated yet
+        if article.valide == False:
+            raise Http404
       except Article.DoesNotExist:
         raise Http404
-
 
     def post(self,request, id):
       article=self.get_object(id)
@@ -171,7 +179,7 @@ class CommentArticleList(APIView):
 
 class CommentArticleDetail(APIView):
   #The owner of the comment only or moderator can delete the comment
-  permission_classes = [IsAuthenticated, OwnerOrModerator]
+  permission_classes = [OwnerOrModerator]
   def get_object(self, id):
     try:
       comment =  commentArticle.objects.get(id=id)

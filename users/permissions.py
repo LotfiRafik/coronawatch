@@ -13,8 +13,10 @@ class IsNotAuthenticated(BasePermission):
 
 class OwnerOnly(BasePermission):
     def has_object_permission(self, request, view, obj):
-        print(obj)
-        return(obj == request.user)
+        valide = request.user.is_authenticated
+        if valide:
+            return(obj == request.user)
+        return False
 
 
         

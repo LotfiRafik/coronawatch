@@ -30,7 +30,6 @@ class GoogleSign(APIView):
         except User.DoesNotExist:
             # provider random default password
             user = {}
-            user['password'] = make_password(BaseUserManager().make_random_password())
             user['email'] = data['email']
             #only mobile user can signin with google 
             user['user_type'] = 4
@@ -40,9 +39,10 @@ class GoogleSign(APIView):
                 user = serializer.save()
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            #user.save()
-            token = Token.objects.create(user=user)
-            response['token'] = token.key
+            #Token has been created auto after saving user
+            user['password'] = Token.objects.get(user=user).key
+            user.save()
+            response['token'] = user['password']
 
         return Response(response, status=status.HTTP_200_OK)
 
@@ -107,12 +107,14 @@ class UserDetail(APIView):
     """
     Retrieve, update or delete a user instance.
     """
-    permission_classes = [IsAuthenticated, OwnerOnly]
+    permission_classes = [OwnerOnly]
 
     def get_object(self, pk):
         try:
             user = User.objects.get(pk=pk)
-            self.check_object_permissions(self.request, user)
+            #GET USER DETAIL CAN BE DONE BY EVERYONE
+            if self.request.method != "GET":
+                self.check_object_permissions(self.request, user)
             return user
         except User.DoesNotExist:
             raise Http404
@@ -122,27 +124,27 @@ class UserDetail(APIView):
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
-    def put(self, request, pk, format=None):
-        user = self.get_object(pk)
-        serializer = UserSerializer(user, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def put(self, request, pk, format=None):
+    #     user = self.get_object(pk)
+    #     serializer = UserSerializer(user, data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-    def patch(self, request, pk, format=None):
-        user = self.get_object(pk)
-        serializer = UserSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # def patch(self, request, pk, format=None):
+    #     user = self.get_object(pk)
+    #     serializer = UserSerializer(user, data=request.data, partial=True)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, pk, format=None):
-        user = self.get_object(pk)
-        user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    # def delete(self, request, pk, format=None):
+    #     user = self.get_object(pk)
+    #     user.delete()
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
