@@ -2,7 +2,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import User
+from .models import *
 from .serializers import UserSerializer, EmailSignSerializer
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.hashers import make_password
@@ -146,5 +146,120 @@ class UserDetail(APIView):
     #     user.delete()
     #     return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+
+class AdminDetail(APIView):
+    """
+    Retrieve, update or delete a user instance.
+    """
+    permission_classes = [OwnerOnly]
+
+    def get_object(self, pk):
+        try:
+            user = Admin.objects.get(pk=pk)
+            #GET USER DETAIL CAN BE DONE BY EVERYONE
+            if self.request.method != "GET":
+                self.check_object_permissions(self.request, user.user)
+            return user
+        except Admin.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        user = self.get_object(pk)
+        serializer = UserSerializer(user.user)
+        #PLUS PROFILE INFORMATION ... 
+        return Response(serializer.data)
+
+class ModeratorDetail(APIView):
+    """
+    Retrieve, update or delete a user instance.
+    """
+    permission_classes = [OwnerOnly]
+
+    def get_object(self, pk):
+        try:
+            user = Moderator.objects.get(pk=pk)
+            #GET USER DETAIL CAN BE DONE BY EVERYONE
+            if self.request.method != "GET":
+                self.check_object_permissions(self.request, user.user)
+            return user
+        except Moderator.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        user = self.get_object(pk)
+        serializer = UserSerializer(user.user)
+        return Response(serializer.data)
+
+
+class AgentDetail(APIView):
+    """
+    Retrieve, update or delete a user instance.
+    """
+    permission_classes = [OwnerOnly]
+
+    def get_object(self, pk):
+        try:
+            user = Agent.objects.get(pk=pk)
+            #GET USER DETAIL CAN BE DONE BY EVERYONE
+            if self.request.method != "GET":
+                self.check_object_permissions(self.request, user.user)
+            return user
+        except Agent.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        user = self.get_object(pk)
+        serializer = UserSerializer(user.user)
+        return Response(serializer.data)
+
+
+
+
+
+class RedactorDetail(APIView):
+    """
+    Retrieve, update or delete a user instance.
+    """
+    permission_classes = [OwnerOnly]
+
+    def get_object(self, pk):
+        try:
+            user = Redactor.objects.get(pk=pk)
+            #GET USER DETAIL CAN BE DONE BY EVERYONE
+            if self.request.method != "GET":
+                self.check_object_permissions(self.request, user.user)
+            return user
+        except Redactor.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        user = self.get_object(pk)
+        serializer = UserSerializer(user.user)
+        return Response(serializer.data)
+
+
+
+
+class MobileDetail(APIView):
+    """
+    Retrieve, update or delete a user instance.
+    """
+    permission_classes = [OwnerOnly]
+
+    def get_object(self, pk):
+        try:
+            user = MobileUser.objects.get(pk=pk)
+            #GET USER DETAIL CAN BE DONE BY EVERYONE
+            if self.request.method != "GET":
+                self.check_object_permissions(self.request, user.user)
+            return user
+        except MobileUser.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        user = self.get_object(pk)
+        serializer = UserSerializer(user.user)
+        return Response(serializer.data)
 
 
