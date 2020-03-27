@@ -17,8 +17,7 @@ class attachmentArticle(models.Model):
         ('video', 'video'),
     )
     attachment_type = models.CharField(choices=ATTACHMENT_TYPE_CHOICES,max_length=5)
-    #path = models.CharField(max_length=255)
-    path = models.FileField(null=True)
+    path = models.CharField(max_length=255,null=True)
     articleid = models.ForeignKey(Article, related_name='attachments', on_delete=models.CASCADE)
 
 
