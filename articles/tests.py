@@ -51,7 +51,10 @@ class NewArticleTestCase(APITestCase):
     
     
     def testArticleGetById(self):
-        response=self.client.get('/api/article/detail/1/')
+        token = Token.objects.get(user=self.user2).key
+        header = {}
+        header['Authorization'] = "Token "+ str(token)
+        response=self.client.get('/api/article/detail/1/', HTTP_AUTHORIZATION=header['Authorization'])
         self.assertEqual(response.status_code,status.HTTP_200_OK)
 
 class NewCommentArticleTestCase(APITestCase):

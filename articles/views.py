@@ -112,7 +112,7 @@ class ArtcileDetail(APIView):
         article = Article.objects.get(id=id)
         #only the moderator who can see non validated articles 
         if article.valide == False:
-          if request.user.is_authenticated and request.user.user_type == 1:
+          if self.request.user.is_authenticated and self.request.user.user_type == 1:
             return article
           else:
             raise Http404
@@ -139,11 +139,14 @@ class NewCommentArticle(APIView):
         article = Article.objects.get(id=id)
         #article non validated yet
         if article.valide == False:
-            raise Http404
+          raise Http404
+        else:
+          return article
       except Article.DoesNotExist:
         raise Http404
 
     def post(self,request, id):
+
       article=self.get_object(id)
       if(article.valide):
         #We cant modify directly request.data so we copy it
