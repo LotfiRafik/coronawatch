@@ -1,4 +1,4 @@
-from django.http import Http404
+from django.http import HttpResponseForbidden, Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -14,19 +14,26 @@ from rest_framework.permissions import IsAuthenticated
 
 
 class GoogleSign(APIView):
-    def post(self, request):
+
+    def auth2_google(self, request):
+
         payload = {'access_token': request.data.get("google_access_token")}  # validate the token
         r = requests.get('https://www.googleapis.com/oauth2/v2/userinfo', params=payload)
         data = json.loads(r.text)
         print(data)
         if 'error' in data:
-            return Response(data, status=status.HTTP_401_UNAUTHORIZED)
+            raise HttpResponseForbidden
+        return data
+        
+    def post(self, request):
 
+        data = self.auth2_google(request)
         response = {}
         # create user if not exist
         try:
             user = User.objects.get(email=data['email'])
             response['token'] = Token.objects.get(user=user).key
+            return Response(response, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             # provider random default password
             user = {}
@@ -40,11 +47,13 @@ class GoogleSign(APIView):
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             #Token has been created auto after saving user
-            user['password'] = Token.objects.get(user=user).key
+            token = Token.objects.get(user=user).key
+            user.set_password(token)
             user.save()
-            response['token'] = user['password']
+            response['token'] = token
+            return Response(response, status=status.HTTP_201_CREATED)
 
-        return Response(response, status=status.HTTP_200_OK)
+        
 
 
 
@@ -54,7 +63,7 @@ class EmailSign(APIView):
 
     def post(self, request):
         response = {}
-        data = request.data.copy()
+        data = request.POST.copy()
         data['user_type'] = 4
         serializer = EmailSignSerializer(data=data)
         if serializer.is_valid():
