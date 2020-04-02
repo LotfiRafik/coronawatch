@@ -321,4 +321,15 @@ class ObtainAuthToken(APIView):
         data.update({'token': token.key})
         return Response(data)
 
-        #return Response({'token': token.key})
+
+
+
+class OwnerDetail(APIView):
+    """
+    Retrieve a user owner instance.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)

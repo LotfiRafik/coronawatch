@@ -1,10 +1,12 @@
 from django.urls import path
 #from rest_framework.authtoken.views import obtain_auth_token
-from users.views import ObtainAuthToken, UserDetail, UsersList, GoogleSign, EmailSign, AdminSign, AdminDetail,ModeratorDetail,AgentDetail,RedactorDetail,MobileDetail
+from users.views import OwnerDetail, ObtainAuthToken, UserDetail, UsersList, GoogleSign, EmailSign, AdminSign, AdminDetail,ModeratorDetail,AgentDetail,RedactorDetail,MobileDetail
 
 urlpatterns = [
     path('', UsersList.as_view()),
     path('<int:pk>/', UserDetail.as_view()),
+
+    path('myinfo/', OwnerDetail.as_view()),
 
     path('admin/<int:pk>/', AdminDetail.as_view()),
     path('moderator/<int:pk>/', ModeratorDetail.as_view()),
