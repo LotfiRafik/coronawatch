@@ -1,16 +1,20 @@
-from django.http import HttpResponseForbidden, Http404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from .models import *
-from .serializers import UserSerializer, EmailSignSerializer
+import requests
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.hashers import make_password
-from rest_framework.utils import json
+from django.http import Http404, HttpResponseForbidden
+from rest_framework import parsers, renderers, status
 from rest_framework.authtoken.models import Token
-import requests
-from .permissions import AdminOnly , IsNotAuthenticated, OwnerOnly
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from rest_framework.compat import coreapi, coreschema
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.schemas import ManualSchema
+from rest_framework.utils import json
+from rest_framework.views import APIView
+
+from .models import *
+from .permissions import AdminOnly, IsNotAuthenticated, OwnerOnly
+from .serializers import EmailSignSerializer, UserSerializer
 
 
 class GoogleSign(APIView):
@@ -274,14 +278,6 @@ class MobileDetail(APIView):
 
 
 
-from rest_framework import parsers, renderers
-from rest_framework.authtoken.models import Token
-from rest_framework.authtoken.serializers import AuthTokenSerializer
-from rest_framework.compat import coreapi, coreschema
-from rest_framework.response import Response
-from rest_framework.schemas import ManualSchema
-from rest_framework.views import APIView
-
 
 class ObtainAuthToken(APIView):
     throttle_classes = ()
@@ -326,5 +322,3 @@ class ObtainAuthToken(APIView):
         return Response(data)
 
         #return Response({'token': token.key})
-
-
