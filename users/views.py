@@ -85,7 +85,7 @@ class EmailSign(APIView):
 #permission to admin only
 class AdminSign(APIView):
 
-    #permission_classes = [IsAuthenticated, AdminOnly]
+    permission_classes = [IsAuthenticated, AdminOnly]
 
     def post(self, request):
         print(request.headers)
