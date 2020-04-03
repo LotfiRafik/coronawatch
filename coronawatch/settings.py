@@ -41,7 +41,7 @@ SECRET_KEY = '79sm2kiumh8)w#aj=!6ptd#u(n3-i&_%v$40+44ht)fc10dt!&'
 DEBUG = bool(os.environ.get("DEBUG_DJANGO"))
 
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost','coronawatch.herokuapp.com']
+ALLOWED_HOSTS = ['*']
 
 
 
@@ -71,8 +71,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -195,3 +195,5 @@ cloudinary.config(
 
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_EXPOSE_HEADERS = ["*"]

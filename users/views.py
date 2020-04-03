@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.schemas import ManualSchema
 from rest_framework.utils import json
 from rest_framework.views import APIView
-
+import sys
 from .models import *
 from .permissions import AdminOnly, IsNotAuthenticated, OwnerOnly
 from .serializers import EmailSignSerializer, UserSerializer
@@ -85,8 +85,11 @@ class EmailSign(APIView):
 #permission to admin only
 class AdminSign(APIView):
     permission_classes = [IsAuthenticated, AdminOnly]
-
+    
     def post(self, request):
+
+        print(request.headers)
+        sys.stdout.flush()
         response = {}
         serializer = EmailSignSerializer(data=request.data)
         if serializer.is_valid():
