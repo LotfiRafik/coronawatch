@@ -14,6 +14,7 @@ class User(AbstractUser):
         (4, 'mobileuser'),
     )
     user_type = models.PositiveSmallIntegerField(choices=USER_TYPE_CHOICES)
+    profile_id = models.IntegerField(default=0,blank=True,null=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['user_type', 'username']
 
@@ -48,15 +49,25 @@ def create_user_profile(sender, instance=None, created=False, **kwargs):
         if(instance.user_type == 0):
             admin = Admin(user=instance)
             admin.save()
+            instance.profile_id = admin.id
+            instance.save()
         elif(instance.user_type == 1):
             moderator = Moderator(user=instance)
             moderator.save()
+            instance.profile_id = moderator.id
+            instance.save()
         elif(instance.user_type == 2):
             agent = Agent(user=instance)
             agent.save()
+            instance.profile_id = agent.id
+            instance.save()
         elif(instance.user_type == 3):
             redactor = Redactor(user=instance)
             redactor.save()
+            instance.profile_id = redactor.id
+            instance.save()
         elif(instance.user_type == 4):
             mobileuser = MobileUser(user=instance)
             mobileuser.save()
+            instance.profile_id = mobileuser.id
+            instance.save()

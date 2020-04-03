@@ -5,7 +5,7 @@ from .models import User, Admin, Moderator, Agent, Redactor, MobileUser
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'email', 'username', 'user_type', 'first_name', 'last_name']
+        fields = ['id', 'email', 'username', 'user_type', 'profile_id', 'first_name', 'last_name']
 
 
 class EmailSignSerializer(serializers.ModelSerializer):
