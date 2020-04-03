@@ -167,6 +167,31 @@ class UserDetail(APIView):
 
 
 
+class WebUsersList(APIView):
+    """
+    List all users, or create a new user.
+    """
+    #permission_classes = [IsAuthenticated, AdminOnly]
+
+    def get(self, request, format=None):
+        admins = User.objects.filter(user_type__range=(0,3))
+        serializer = UserSerializer(admins, many=True)
+        return Response(serializer.data)
+
+
+
+class AdminList(APIView):
+    """
+    List all users, or create a new user.
+    """
+    #permission_classes = [IsAuthenticated, AdminOnly]
+
+    def get(self, request, format=None):
+        admins = User.objects.filter(user_type=0)
+        serializer = UserSerializer(admins, many=True)
+        return Response(serializer.data)
+
+
 class AdminDetail(APIView):
     """
     Retrieve, update or delete a user instance.
@@ -189,6 +214,22 @@ class AdminDetail(APIView):
         #PLUS PROFILE INFORMATION ... 
         return Response(serializer.data)
 
+
+
+class ModeratorList(APIView):
+    """
+    List all users, or create a new user.
+    """
+    #permission_classes = [IsAuthenticated, AdminOnly]
+
+    def get(self, request, format=None):
+        moderators = User.objects.filter(user_type=1)
+        serializer = UserSerializer(moderators, many=True)
+        return Response(serializer.data)
+
+
+
+
 class ModeratorDetail(APIView):
     """
     Retrieve, update or delete a user instance.
@@ -209,6 +250,19 @@ class ModeratorDetail(APIView):
         user = self.get_object(pk)
         serializer = UserSerializer(user.user)
         return Response(serializer.data)
+
+
+class AgentList(APIView):
+    """
+    List all users, or create a new user.
+    """
+    #permission_classes = [IsAuthenticated, AdminOnly]
+
+    def get(self, request, format=None):
+        agents = User.objects.filter(user_type=2)
+        serializer = UserSerializer(agents, many=True)
+        return Response(serializer.data)
+
 
 
 class AgentDetail(APIView):
@@ -233,6 +287,16 @@ class AgentDetail(APIView):
         return Response(serializer.data)
 
 
+class RedactorList(APIView):
+    """
+    List all users, or create a new user.
+    """
+    #permission_classes = [IsAuthenticated, AdminOnly]
+
+    def get(self, request, format=None):
+        redactors = User.objects.filter(user_type=3)
+        serializer = UserSerializer(redactors, many=True)
+        return Response(serializer.data)
 
 
 
@@ -258,6 +322,16 @@ class RedactorDetail(APIView):
         return Response(serializer.data)
 
 
+class MobileUserList(APIView):
+    """
+    List all users, or create a new user.
+    """
+    #permission_classes = [IsAuthenticated, AdminOnly]
+
+    def get(self, request, format=None):
+        mobiles = User.objects.filter(user_type=4)
+        serializer = UserSerializer(mobiles, many=True)
+        return Response(serializer.data)
 
 
 class MobileDetail(APIView):
