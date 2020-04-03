@@ -54,7 +54,9 @@ class GoogleSign(APIView):
             token = Token.objects.get(user=user).key
             user.set_password(token)
             user.save()
-            response['token'] = token
+            user = UserSerializer(user)
+            response = user.data.copy()
+            response.update({'token': token})
             return Response(response, status=status.HTTP_201_CREATED)
 
         
@@ -73,7 +75,9 @@ class EmailSign(APIView):
         if serializer.is_valid():
             user = serializer.save()
             token = Token.objects.get(user=user).key
-            response['token'] = token
+            user = UserSerializer(user)
+            response = user.data.copy()
+            response.update({'token': token})
             return Response(response, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -88,7 +92,9 @@ class AdminSign(APIView):
         if serializer.is_valid():
             user = serializer.save()
             token = Token.objects.get(user=user).key
-            response['token'] = token
+            user = UserSerializer(user)
+            response = user.data.copy()
+            response.update({'token': token})
             return Response(response, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
