@@ -44,7 +44,7 @@ class NewArticle(APIView):
     sys.stdout.flush()
     print(request.data)
     sys.stdout.flush()
-    data = request.POST.copy()
+    data = request.data.copy()
     print(data)
     sys.stdout.flush()
     #Id of the redactor 
