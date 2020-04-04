@@ -61,7 +61,8 @@ class NewArticle(APIView):
     article = serializer.save()
     #Upload attachments to the cloud
     if "attachments" in request.data:
-      for f in request.data['attachments']:
+      for f in request.FILES.getlist('attachments'):
+        print(f)
         #if file is TemporaryUploadFile type , we pass the path 
         if isinstance(f, TemporaryUploadedFile):
           f = f.temporary_file_path()
