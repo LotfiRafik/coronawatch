@@ -60,11 +60,12 @@ class NewArticle(APIView):
     #Save article in database
     article = serializer.save()
     #Upload attachments to the cloud
-    for f in request.data.getlist('attachments'):
-      #if file is TemporaryUploadFile type , we pass the path 
-      if isinstance(f, TemporaryUploadedFile):
-        f = f.temporary_file_path()
-      upload_file_cloudinary(f, article)
+    if "attachments" in request.data:
+      for f in request.data['attachments']:
+        #if file is TemporaryUploadFile type , we pass the path 
+        if isinstance(f, TemporaryUploadedFile):
+          f = f.temporary_file_path()
+        upload_file_cloudinary(f, article)
     return Response({'url':'https://coronawatch.herokuapp.com/api/article/detail/'+str(article.id)+'/'}, status=status.HTTP_201_CREATED)
 
 
