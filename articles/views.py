@@ -40,7 +40,13 @@ class NewArticle(APIView):
   def post(self,request):
     #We cant modify directly request.data so we copy it
     data = {}
+    print(request.headers)
+    sys.stdout.flush()
+    print(request.data)
+    sys.stdout.flush()
     data = request.POST.copy()
+    print(data)
+    sys.stdout.flush()
     #Id of the redactor 
     data['redactor'] = request.user.redactor.id
     data['valide'] = False
@@ -106,16 +112,14 @@ class ValidateArticle(APIView):
 
 
 class ArtcileDetail(APIView):
-  
+    permission_classes = [OwnerOrModerator]
     def get_object(self, id):
       try:
         article = Article.objects.get(id=id)
-        #only the moderator who can see non validated articles 
-        if article.valide == False:
-          if self.request.user.is_authenticated and self.request.user.user_type == 1:
-            return article
-          else:
-            raise Http404
+        #only the moderator or article owner can see non validated articles 
+        if self.request.method != "GET" or article.valide == False:
+          self.check_object_permissions(self.request, article.redactor.user)
+        return article
       except Article.DoesNotExist:
         raise Http404
 
@@ -125,10 +129,10 @@ class ArtcileDetail(APIView):
       serializer=ArticleSerializer(article)
       return Response(serializer.data) 
     
-    # def delete(self,request,id):
-    #   article=self.get_object(id)
-    #   article.delete()
-    #   return Response(status=status.HTTP_204_NO_CONTENT)
+    def delete(self,request,id):
+       article=self.get_object(id)
+       article.delete()
+       return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class NewCommentArticle(APIView):  
@@ -149,8 +153,12 @@ class NewCommentArticle(APIView):
 
       article=self.get_object(id)
       if(article.valide):
+        print(request.data)
+        sys.stdout.flush()
         #We cant modify directly request.data so we copy it
         data = request.data.copy()
+        print(data)
+        sys.stdout.flush()
         #Id of the mobileUser 
         data['mobileuserid'] = request.user.mobileuser.id
         data['articleid'] = id

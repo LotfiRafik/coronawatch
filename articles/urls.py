@@ -15,8 +15,9 @@ urlpatterns = [
     #create new comment on an article (id)   #POST
     path('<int:id>/newComment/',NewCommentArticle.as_view()),
 
-    #get article (id) detail  #GET
+    #get/delete article (id) detail  #GET/DELETE
     path('detail/<int:id>/',ArtcileDetail.as_view()), 
+
     
     #get comment detail     #GET/PUT/PATCH/DELETE
     path('detailComment/<int:id>/',CommentArticleDetail.as_view()),
