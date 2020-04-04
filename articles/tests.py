@@ -180,5 +180,4 @@ class ArticleDetailTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION="Token " + str(self.token_moderator))
         response = self.client.delete('/api/article/detail/'+str(self.article.id)+'/')
         self.assertEqual(response.status_code,status.HTTP_403_FORBIDDEN)
-
-
+            

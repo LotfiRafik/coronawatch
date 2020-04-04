@@ -1,5 +1,5 @@
 from django.urls import path
-from articles.views import ArticleList,ArtcileDetail,NewArticle,CommentArticleList,CommentArticleDetail,NewCommentArticle, ValidateArticle
+from articles.views import attachmentArticleDetail,attachmentArticleView, ArticleList,ArtcileDetail,NewArticle,CommentArticleList,CommentArticleDetail,NewCommentArticle, ValidateArticle
 
 urlpatterns = [
 
@@ -14,6 +14,15 @@ urlpatterns = [
 
     #create new comment on an article (id)   #POST
     path('<int:id>/newComment/',NewCommentArticle.as_view()),
+
+
+    #add/delete attachment to an article (id)   #POST
+    path('<int:id>/attachments/',attachmentArticleView.as_view()),
+
+
+    #delete attachment from an article (id)   #DELETE
+    path('attachment/<int:id>/',attachmentArticleDetail.as_view()),
+
 
     #get/delete/edit article (id) detail  #GET/DELETE/PATCH
     path('detail/<int:id>/',ArtcileDetail.as_view()), 

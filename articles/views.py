@@ -72,6 +72,62 @@ class NewArticle(APIView):
 
 
 
+#only the redactor can add attachments to his article
+class attachmentArticleView(APIView):
+
+  permission_classes = [IsAuthenticated, RedactorOnly, OwnerOnly]
+  
+  def get_object(self, id):
+    try:
+      article = Article.objects.get(id=id)
+      self.check_object_permissions(self.request, article.redactor.user)
+      return article
+    except Article.DoesNotExist:
+      raise Http404
+    
+
+  def post(self,request,id):
+    #We cant modify directly request.data so we copy it
+    data = {}
+    print(request.headers)
+    sys.stdout.flush()
+    print(request.data)
+    sys.stdout.flush()
+    data = request.data.copy()
+    print(data)
+    sys.stdout.flush()
+    article=self.get_object(id)
+    #Upload attachments to the cloud
+    if "attachments" in request.data:
+      for f in request.FILES.getlist('attachments'):
+        print(f)
+        #if file is TemporaryUploadFile type , we pass the path 
+        if isinstance(f, TemporaryUploadedFile):
+          f = f.temporary_file_path()
+        upload_file_cloudinary(f, article)
+    return Response({'url':'https://coronawatch.herokuapp.com/api/article/detail/'+str(article.id)+'/'}, status=status.HTTP_201_CREATED)
+
+
+
+#only the redactor can delete attachments from his article
+class attachmentArticleDetail(APIView):
+
+  permission_classes = [IsAuthenticated, RedactorOnly, OwnerOnly]
+  
+  def get_object(self, id):
+    try:
+      attachment = attachmentArticle.objects.get(id=id)
+      self.check_object_permissions(self.request, attachment.articleid.redactor.user)
+      return attachment
+    except attachmentArticle.DoesNotExist:
+      raise Http404
+    
+  def delete(self,request,id):
+    attachment=self.get_object(id)
+    attachment.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 #upload image or video to cloud
 #update database (attachement_table)
 def upload_file_cloudinary(f,article):

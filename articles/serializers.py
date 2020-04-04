@@ -10,7 +10,7 @@ class CommentArtcileSerializer(serializers.ModelSerializer):
 class AttachementSerializer(serializers.ModelSerializer):
     class Meta:
         model = attachmentArticle
-        fields = ['attachment_type', 'path']
+        fields = ['id','attachment_type', 'path']
 
 
 class ArticleSerializer(serializers.ModelSerializer):
