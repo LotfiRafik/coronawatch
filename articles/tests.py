@@ -93,15 +93,92 @@ class NewCommentArticleTestCase(APITestCase):
    
         
 
+class ArticleDetailTestCase(APITestCase):
+
+
+    @classmethod  # <- setUpClass doit être une méthode de classe, attention !
+    def setUpTestData(cls):
+        cls.redactor = User.objects.create(email="redactor@esi.dz",user_type=3,username="red")
+        cls.token_redactor = Token.objects.get(user=cls.redactor).key
+        cls.wredactor = User.objects.create(email="wredactor@esi.dz",user_type=3,username="wred")
+        cls.token_wredactor = Token.objects.get(user=cls.wredactor).key
+        cls.moderator = User.objects.create(email="moderator@esi.dz",user_type=1,username="mod")
+        cls.token_moderator = Token.objects.get(user=cls.moderator).key
+        cls.Authorization = "Token "+ str(cls.token_redactor)     
+        cls.mobile = User.objects.create(email="mobile@esi.dz",user_type=1,username="mob")
+        cls.token_mobile = Token.objects.get(user=cls.mobile).key
+
+
+    def setUp(self):
+        self.article = Article.objects.create(
+            title='TestCase',
+            content="Wearetestingamethodpost",
+            redactor=self.redactor.redactor,
+            valide=True,
+            moderatorid=self.moderator.moderator
+            )
+            
+             
+
     
-    
+    def test_patch(self):
+        data = {'title':'test_patch_title','content':'test_patch_content'}
+        response = self.client.patch('/api/article/detail/'+str(self.article.id)+'/', data=data, HTTP_AUTHORIZATION=self.Authorization)
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        #test that the title and content has changed
+        self.assertEqual("test_patch_title", response.data['title'])
+        self.assertEqual("test_patch_content", response.data['content'])
+        #test that the article became invalid after edit
+        self.assertFalse(response.data['valide'])
+        #test that the article moderator id became null
+        self.assertIsNone(response.data['moderatorid'])
 
+    def test_patch_without_credentials(self):
+        data = {'title':'test_patch_title','content':'test_patch_content'}
+        response = self.client.patch('/api/article/detail/'+str(self.article.id)+'/', data=data)
+        self.assertEqual(response.status_code,status.HTTP_401_UNAUTHORIZED)
 
+    def test_patch_wrong_redactor(self):
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + str(self.token_wredactor))
+        data = {'title':'test_patch_title','content':'test_patch_content'}
+        response = self.client.patch('/api/article/detail/'+str(self.article.id)+'/', data=data)
+        self.assertEqual(response.status_code,status.HTTP_403_FORBIDDEN)
 
+    def test_patch_moderator_credentials(self):
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + str(self.token_moderator))
+        data = {'title':'test_patch_title','content':'test_patch_content'}
+        response = self.client.patch('/api/article/detail/'+str(self.article.id)+'/', data=data)
+        self.assertEqual(response.status_code,status.HTTP_403_FORBIDDEN)
 
-        
-
-        
+    def test_patch_change_valide_boolean(self):
+        self.article.valide = False
+        self.article.save()
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + str(self.token_redactor))
+        data = {'valide':True}
+        response = self.client.patch('/api/article/detail/'+str(self.article.id)+'/', data=data)
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        #test that the article still invalide
+        self.assertFalse(response.data['valide'])
 
    
+
+   
+    def test_delete(self):
+        response = self.client.delete('/api/article/detail/'+str(self.article.id)+'/', HTTP_AUTHORIZATION=self.Authorization)
+        self.assertEqual(response.status_code,status.HTTP_204_NO_CONTENT)
+
+    def test_delete_without_credentials(self):
+        response = self.client.delete('/api/article/detail/'+str(self.article.id)+'/')
+        self.assertEqual(response.status_code,status.HTTP_401_UNAUTHORIZED)
+
+    def test_delete_wrong_redactor(self):
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + str(self.token_wredactor))
+        response = self.client.delete('/api/article/detail/'+str(self.article.id)+'/')
+        self.assertEqual(response.status_code,status.HTTP_403_FORBIDDEN)
+
+    def test_delete_moderator_credentials(self):
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + str(self.token_moderator))
+        response = self.client.delete('/api/article/detail/'+str(self.article.id)+'/')
+        self.assertEqual(response.status_code,status.HTTP_403_FORBIDDEN)
+
 

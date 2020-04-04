@@ -53,6 +53,7 @@ class NewArticle(APIView):
     #Id of the redactor 
     data['redactor'] = request.user.redactor.id
     data['valide'] = False
+    data['moderatorid'] = None
     serializer=ArticleSerializer(data=data)
     if not serializer.is_valid():
       print(serializer.errors)
@@ -117,7 +118,7 @@ class ValidateArticle(APIView):
 
 
 class ArtcileDetail(APIView):
-    permission_classes = [OwnerOrModerator]
+    permission_classes = [ArticleOwnerOrModerator]
     def get_object(self, id):
       try:
         article = Article.objects.get(id=id)
@@ -132,7 +133,31 @@ class ArtcileDetail(APIView):
     def get(self,request,id):
       article=self.get_object(id)
       serializer=ArticleSerializer(article)
-      return Response(serializer.data) 
+      return Response(serializer.data)
+
+
+    def patch(self, request, id, format=None):
+      print(request.headers)
+      sys.stdout.flush()
+      print(request.data)
+      sys.stdout.flush()
+      data = {}
+      data = request.data.copy()
+      print(data)
+      sys.stdout.flush()
+      article=self.get_object(id)
+      #Only the owner of the article can edit it (Redactor)
+      #When ever the redactor edit the article , the article will be non validated
+      data['redactor'] = request.user.redactor.id
+      data['valide'] = False
+      data['moderatorid'] = None
+
+      serializer = ArticleSerializer(article, data=data, partial=True)
+      if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     
     def delete(self,request,id):
        article=self.get_object(id)

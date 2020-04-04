@@ -37,3 +37,18 @@ class OwnerOrModerator(BasePermission):
             return(request.user.user_type == 1 or obj == request.user)
         return False
 
+
+class ArticleOwnerOrModerator(BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        valide = request.user.is_authenticated
+        #if user is authenticated
+        if valide:
+            #if the user is a moderator then he can GET,OPTION,HEAD the article but cannot delete patch ..ext
+            if(request.user.user_type == 1):
+                return request.method in SAFE_METHODS
+            #else only the redactor owner of the article can do what ever he wants
+            return(obj == request.user)
+        return False
+
+
