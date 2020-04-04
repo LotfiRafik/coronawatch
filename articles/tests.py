@@ -21,7 +21,7 @@ class NewArticleTestCase(APITestCase):
         self.user1.save()
         self.user2 = User(email="test@test.com",user_type=1,username="mod")
         self.user2.save()
-        Article.objects.create(
+        self.article = Article.objects.create(
             title='TestCase',
             content="Wearetestingamethodpost",
             date="2020-03-23",
@@ -54,7 +54,7 @@ class NewArticleTestCase(APITestCase):
         token = Token.objects.get(user=self.user2).key
         header = {}
         header['Authorization'] = "Token "+ str(token)
-        response=self.client.get('/api/article/detail/1/', HTTP_AUTHORIZATION=header['Authorization'])
+        response=self.client.get('/api/article/detail/'+str(self.article.id)+'/', HTTP_AUTHORIZATION=header['Authorization'])
         self.assertEqual(response.status_code,status.HTTP_200_OK)
 
 class NewCommentArticleTestCase(APITestCase):
