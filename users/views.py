@@ -69,7 +69,7 @@ class EmailSign(APIView):
 
     def post(self, request):
         response = {}
-        data = request.POST.copy()
+        data = request.data.copy()
         data['user_type'] = 4
         serializer = EmailSignSerializer(data=data)
         if serializer.is_valid():

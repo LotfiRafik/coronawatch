@@ -23,7 +23,10 @@ class ArticleList(APIView):
     def get(self,request):
         if request.user.is_authenticated and request.user.user_type == 1:
           #only the moderator who can see all articles 
-            articles=Article.objects.all()
+          articles=Article.objects.all()
+        elif request.user.is_authenticated and request.user.user_type == 3:
+          #redactor can see his articles
+          articles=Article.objects.filter(redactor=request.user.redactor)
         else:
           # the others see only the validated articles 
           articles = Article.objects.filter(valide=True)
