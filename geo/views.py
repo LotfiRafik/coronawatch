@@ -20,15 +20,22 @@ import datetime
 
 class CountryList(APIView):
     """
-    List all countries
+    List all countries,Create new country
     """
-    #permission_classes = [IsAuthenticated, AdminOnly]
+    permission_classes = [IsAgentOrReadOnly]
 
     def get(self, request, format=None):
         countries = Countries.objects.all()
-        print(countries)
         serializer = CountrySerializer(countries, many=True)
         return Response(serializer.data)
+
+    def post(self,request):
+
+        serializer=CountrySerializer(data=request.data)
+        if serializer.is_valid():
+          serializer.save()
+          return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CountryDetail(APIView):
@@ -55,14 +62,30 @@ class CountryDetail(APIView):
 
 class RegionList(APIView):
     """
-    List all regions
+    List all regions, OR create new regions
     """
-    #permission_classes = [IsAuthenticated, AdminOnly]
+    permission_classes = [IsAgentOrReadOnly]
 
     def get(self, request, format=None):
         regions = Regions.objects.all()
         serializer = RegionSerializer(regions, many=True)
         return Response(serializer.data)
+
+    def post(self,request):
+
+        data = {}
+        data = request.data.copy()
+        if 'riskregion' in data and data['riskregion'] == 'True':
+            data['riskagentid'] = request.user.agent.id
+            data['riskregion'] = True
+        data['riskmoderatorid'] = None
+        data['riskvalide'] = False
+        serializer=RegionSerializer(data=data)
+        if serializer.is_valid():
+          serializer.save()
+          return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class RegionDetail(APIView):
@@ -108,8 +131,8 @@ class infectedRegionHistory(APIView):
 
 
 
-#only the agent can insert an infected regio
-class InfectedRegion(APIView):
+#only the agent can insert an infected region
+class InfectedRegionList(APIView):
   permission_classes = [IsAgentOrReadOnly]
   
   def get(self, request, format=None):
@@ -126,19 +149,18 @@ class InfectedRegion(APIView):
     data['agentid'] = request.user.agent.id
     data['moderatorid'] = None
     data['valide'] = False
+    serializer=infectedRegionSerializer(data=data)
+    if not serializer.is_valid():
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     #verify if we inserted the region today into infected regions
-    infecteregion = infectedRegions.objects.filter(regionid=data['regionid'],date=datetime.date.today()).first()
-    print(infecteregion)
-    if not infectedRegions:
-        serializer=infectedRegionSerializer(data=data)
-        if not serializer.is_valid():
-            print(serializer.errors)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    infectedregion = infectedRegions.objects.filter(regionid=data['regionid'],date=datetime.date.today()).first()
+    if not infectedregion:
         #Save infected region in database
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
-        serializer = infectedRegionSerializer(infecteregion, data=data)
+        serializer = infectedRegionSerializer(infectedregion, data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data,status=status.HTTP_200_OK)

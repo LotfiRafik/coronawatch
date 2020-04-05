@@ -11,7 +11,7 @@ class CountrySerializer(serializers.ModelSerializer):
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Regions
-        exclude = ['riskvalide','riskmoderatorid']
+        exclude = ['riskmoderatorid']
 
 
 class DetailCountrySerializer(serializers.ModelSerializer):
@@ -27,7 +27,7 @@ class infectedRegionSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = infectedRegions
-        exclude = ['id','valide','moderatorid']
+        exclude = ['id','moderatorid']
 
 class detailInfectSerializer(serializers.ModelSerializer):
     
