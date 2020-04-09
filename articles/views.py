@@ -23,13 +23,13 @@ class ArticleList(APIView):
     def get(self,request):
         if request.user.is_authenticated and request.user.user_type == 1:
           #only the moderator who can see all articles 
-          articles=Article.objects.all()
+          articles=Article.objects.all().order_by('-date')
         elif request.user.is_authenticated and request.user.user_type == 3:
           #redactor can see his articles
-          articles=Article.objects.filter(redactor=request.user.redactor)
+          articles=Article.objects.filter(redactor=request.user.redactor).order_by('-date')
         else:
           # the others see only the validated articles 
-          articles = Article.objects.filter(valide=True)
+          articles = Article.objects.filter(valide=True).order_by('-date')
 
         serializer=ArticleSerializer(articles, many=True)
         return Response(serializer.data)
