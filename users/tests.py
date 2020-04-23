@@ -121,9 +121,9 @@ class AdminSignTestCase(APITestCase):
 class UsersListTestCase(APITestCase):
 
 
-    def test_get(self):
+    def test_get_without_auth(self):
         response=self.client.get('/api/users/')
-        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        self.assertEqual(response.status_code,status.HTTP_401_UNAUTHORIZED)
 
 
 class UserDetailTestCase(APITestCase):

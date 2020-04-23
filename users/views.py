@@ -108,7 +108,7 @@ class UsersList(APIView):
     """
     List all users, or create a new user.
     """
-    #permission_classes = [IsAuthenticated, AdminOnly]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         users = User.objects.all()
@@ -174,7 +174,7 @@ class WebUsersList(APIView):
     """
     List all users, or create a new user.
     """
-    #permission_classes = [IsAuthenticated, AdminOnly]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         admins = User.objects.filter(user_type__range=(0,3))
@@ -187,7 +187,7 @@ class AdminList(APIView):
     """
     List all users, or create a new user.
     """
-    #permission_classes = [IsAuthenticated, AdminOnly]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         admins = User.objects.filter(user_type=0)
@@ -223,7 +223,7 @@ class ModeratorList(APIView):
     """
     List all users, or create a new user.
     """
-    #permission_classes = [IsAuthenticated, AdminOnly]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         moderators = User.objects.filter(user_type=1)
@@ -259,7 +259,7 @@ class AgentList(APIView):
     """
     List all users, or create a new user.
     """
-    #permission_classes = [IsAuthenticated, AdminOnly]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         agents = User.objects.filter(user_type=2)
@@ -294,7 +294,7 @@ class RedactorList(APIView):
     """
     List all users, or create a new user.
     """
-    #permission_classes = [IsAuthenticated, AdminOnly]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         redactors = User.objects.filter(user_type=3)
@@ -329,7 +329,7 @@ class MobileUserList(APIView):
     """
     List all users, or create a new user.
     """
-    #permission_classes = [IsAuthenticated, AdminOnly]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, format=None):
         mobiles = User.objects.filter(user_type=4)
