@@ -15,6 +15,7 @@ from .models import Countries, Regions, infectedRegions, receptionCenter
 from .permissions import IsAgentOrReadOnly, AdminOnly, IsNotAuthenticated, OwnerOnly, AgentOnly, AgentOnly_Object
 from .serializers import HistoryInfectedRegionSerializer, CountrySerializer, RegionSerializer, infectedRegionSerializer, DetailCountrySerializer
 
+import sys
 import datetime
 # Create your views here.
 
