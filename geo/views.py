@@ -33,6 +33,10 @@ class CountryList(APIView):
 
     def post(self,request):
 
+        print(request.headers)
+        sys.stdout.flush()
+        print(request.data)
+        sys.stdout.flush()
         serializer=CountrySerializer(data=request.data)
         if serializer.is_valid():
           serializer.save()
@@ -57,6 +61,10 @@ class CountryDetail(APIView):
             raise Http404
 
     def get(self, request, pk, format=None):
+        print(request.headers)
+        sys.stdout.flush()
+        print(request.data)
+        sys.stdout.flush()
         country = self.get_object(pk)
         serializer = DetailCountrySerializer(country)
         return Response(serializer.data)
@@ -74,7 +82,10 @@ class RegionList(APIView):
         return Response(serializer.data)
 
     def post(self,request):
-
+        print(request.headers)
+        sys.stdout.flush()
+        print(request.data)
+        sys.stdout.flush()
         data = {}
         data = request.data.copy()
         if 'riskregion' in data and data['riskregion'] == 'True':
@@ -125,6 +136,10 @@ class InfectedRegionList(APIView):
 
 
   def post(self,request):
+    print(request.headers)
+    sys.stdout.flush()
+    print(request.data)
+    sys.stdout.flush()
     #We cant modify directly request.data so we copy it
     data = {}
     data = request.POST.copy()
