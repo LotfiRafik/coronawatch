@@ -2,6 +2,8 @@ import requests
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.hashers import make_password
 from django.http import Http404, HttpResponseForbidden
+from django.db.models import Max,F
+
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
@@ -112,31 +114,12 @@ class RegionDetail(APIView):
 
 
 
-class infectedRegionHistory(APIView):
-    """
-    Retrieve history of an infected region 
-    """
-
-    def get_object(self, regionid):
-        try:
-            region = Regions.objects.get(id=regionid)
-            return region
-        except Regions.DoesNotExist:
-            raise Http404
-
-    def get(self, request, regionid, format=None):
-        region = self.get_object(regionid)
-        serializer = HistoryInfectedRegionSerializer(region)
-        return Response(serializer.data)
-
-
-
 #only the agent can insert an infected region
 class InfectedRegionList(APIView):
   permission_classes = [IsAgentOrReadOnly]
   
   def get(self, request, format=None):
-      infectedregions = infectedRegions.objects.all()
+      infectedregions = infectedRegions.objects.all().distinct('regionid').order_by('regionid','-date')
       serializer = infectedRegionSerializer(infectedregions, many=True)
       return Response(serializer.data)
 
@@ -167,3 +150,19 @@ class InfectedRegionList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         
+class infectedRegionHistory(APIView):
+    """
+    Retrieve history of an infected region 
+    """
+
+    def get_object(self, regionid):
+        try:
+            region = Regions.objects.get(id=regionid)
+            return region
+        except Regions.DoesNotExist:
+            raise Http404
+
+    def get(self, request, regionid, format=None):
+        region = self.get_object(regionid)
+        serializer = HistoryInfectedRegionSerializer(region)
+        return Response(serializer.data)
