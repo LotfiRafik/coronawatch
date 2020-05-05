@@ -27,6 +27,9 @@ urlpatterns = [
 
     path('api/article/', include('articles.urls')),
 
+    path('api/geo/', include('geo.urls')),
+
+
     path('apidoc/', get_schema_view(
         title="CoronaWatch",
         description="API for all things …",

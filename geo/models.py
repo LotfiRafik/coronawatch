@@ -14,12 +14,13 @@ class Countries(models.Model):
 class Regions(models.Model):
     region_name = models.CharField(max_length=255)
     code = models.CharField(max_length=10)
-    country = models.ForeignKey(Countries, models.DO_NOTHING)
+    country = models.ForeignKey(Countries, models.DO_NOTHING, related_name='regions')
     latitude = models.DecimalField(max_digits=10, decimal_places=8, blank=True, null=True)
     longitude = models.DecimalField(max_digits=11, decimal_places=8, blank=True, null=True)
-    riskagentid = models.ForeignKey(Agent, models.DO_NOTHING, db_column='riskagentid', blank=True, null=True)
-    riskmoderatorid = models.ForeignKey(Moderator, models.DO_NOTHING, db_column='riskmoderatorid', blank=True, null=True)
-    riskvalide = models.BooleanField()
+    riskagentid = models.ForeignKey(Agent, models.DO_NOTHING, blank=True, null=True)
+    riskmoderatorid = models.ForeignKey(Moderator, models.DO_NOTHING, blank=True, null=True)
+    riskvalide = models.BooleanField(default=False)
+    riskregion = models.BooleanField(default=False)
 
     # class Meta:
     #     managed = False
@@ -28,13 +29,16 @@ class Regions(models.Model):
 
 
 class infectedRegions(models.Model):
-    nb_death = models.IntegerField(default=0)
-    nb_recovered = models.IntegerField(default=0)
+    nb_death = models.IntegerField()
+    nb_recovered = models.IntegerField()
     date = models.DateField(auto_now_add=True)
-    regionid = models.ForeignKey(Regions, models.DO_NOTHING, blank=True, null=True)
-    agentid = models.ForeignKey(Agent, models.DO_NOTHING, db_column='riskagentid', blank=True, null=True)
-    moderatorid = models.ForeignKey(Moderator, models.DO_NOTHING, db_column='riskmoderatorid', blank=True, null=True)
-    valide = models.BooleanField()
+    regionid = models.ForeignKey(Regions, models.DO_NOTHING,  null=False, related_name='history')
+    agentid = models.ForeignKey(Agent, models.DO_NOTHING, null=False)
+    moderatorid = models.ForeignKey(Moderator, models.DO_NOTHING, blank=True, null=True)
+    valide = models.BooleanField(default=False)
+    nb_notyetsick = models.IntegerField() 
+    nb_suspected = models.IntegerField()
+    nb_confirmed = models.IntegerField()
 
 
 class receptionCenter(models.Model):
