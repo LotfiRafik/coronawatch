@@ -18,17 +18,17 @@ before_install:
 script:
 - echo "Starting tests"
 - python manage.py test
-#deploy:
-#  provider: heroku
-#  api_key:
-#    secure: "RNJFAoaXBdfKKwXHiCbXmv3MFHzVDN5w+fEOrKMnLxinjqNSNXOdj/p4etaP5DLy+FMMZSK0CasestSWY8ZZ7Gz63XYygN4nI6WunZfIeHp6y5Ojtkpg3Vf4mlX2Lifmvi2xrYgLs4DROCQnOsGfjiN6wBiU+1e5n5gULybY2Bfi44BKDS6mjRLkHFtYpnXkyx98QmTAYnDf4NORvPQGL394YBAd927TmwIx+GiueMLUhQT3yHXS724Uuizf3BlS299MDhrsTBE7ckMiYIKmugpcpBUC3zwEXpu/PGYas5HeGLa8xW7/rB6z3XF6Svm4ddk9A008yGOfZxV2peoHZfnGfS/uXm0y0nX9A/UsuLe12hWZP+XxcWR+7lSCx+PAYpZ0PCPVyWFUrW7FOgLWavpnAF2eb7W9I8y2B3s0EETgFe1ass8EFgd0l2kMlG5mWnGCUkEZTCFIhdTcQlFcwyDk4XcYnl8Eyl0TG8Ey+UX3rKKM59gv/Th30Qg8h6DzPnY9liWMNWVEJU+HsGRH9uCBNaIjkIwCZqSq2i/C324//Juqnl2GA/abW19leewhX6TuUArGJI8ZbzoQMxSTJsfF8gFG3lpedXcp3aaXdsoyHLT/AKowyy03c7imugSfOWIq2450t51veCeMmkwF0bCn/6g4FId5T3H4AVDwFuw="
-#  app:
-#    master: coronawatch
 deploy:
-  provider: script
-  script:
-    docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com;
-    heroku container:push web --app coronawatch;
-    heroku container:release web --app coronawatch
-  on:
-     branch: master
+  provider: heroku
+  api_key:
+    secure: "RNJFAoaXBdfKKwXHiCbXmv3MFHzVDN5w+fEOrKMnLxinjqNSNXOdj/p4etaP5DLy+FMMZSK0CasestSWY8ZZ7Gz63XYygN4nI6WunZfIeHp6y5Ojtkpg3Vf4mlX2Lifmvi2xrYgLs4DROCQnOsGfjiN6wBiU+1e5n5gULybY2Bfi44BKDS6mjRLkHFtYpnXkyx98QmTAYnDf4NORvPQGL394YBAd927TmwIx+GiueMLUhQT3yHXS724Uuizf3BlS299MDhrsTBE7ckMiYIKmugpcpBUC3zwEXpu/PGYas5HeGLa8xW7/rB6z3XF6Svm4ddk9A008yGOfZxV2peoHZfnGfS/uXm0y0nX9A/UsuLe12hWZP+XxcWR+7lSCx+PAYpZ0PCPVyWFUrW7FOgLWavpnAF2eb7W9I8y2B3s0EETgFe1ass8EFgd0l2kMlG5mWnGCUkEZTCFIhdTcQlFcwyDk4XcYnl8Eyl0TG8Ey+UX3rKKM59gv/Th30Qg8h6DzPnY9liWMNWVEJU+HsGRH9uCBNaIjkIwCZqSq2i/C324//Juqnl2GA/abW19leewhX6TuUArGJI8ZbzoQMxSTJsfF8gFG3lpedXcp3aaXdsoyHLT/AKowyy03c7imugSfOWIq2450t51veCeMmkwF0bCn/6g4FId5T3H4AVDwFuw="
+  app:
+    master: coronawatch
+#deploy:
+#  provider: script
+#  script:
+#    docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com;
+#    heroku container:push web --app coronawatch;
+#    heroku container:release web --app coronawatch
+#  on:
+#     branch: master
