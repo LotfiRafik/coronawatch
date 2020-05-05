@@ -19,8 +19,8 @@ class Regions(models.Model):
     longitude = models.DecimalField(max_digits=11, decimal_places=8, blank=True, null=True)
     riskagentid = models.ForeignKey(Agent, models.DO_NOTHING, blank=True, null=True)
     riskmoderatorid = models.ForeignKey(Moderator, models.DO_NOTHING, blank=True, null=True)
-    riskvalide = models.BooleanField(default=False)
-    riskregion = models.BooleanField(default=False)
+    riskvalide = models.BooleanField(default=False,null=True)
+    riskregion = models.BooleanField(default=False,null=True)
 
     # class Meta:
     #     managed = False
