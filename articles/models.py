@@ -7,7 +7,7 @@ class Article(models.Model):
     content = models.TextField()
     date = models.DateField(auto_now_add=True)
     redactor = models.ForeignKey(Redactor, related_name='articles', on_delete=models.CASCADE)
-    moderatorid = models.ForeignKey(Moderator, models.DO_NOTHING, blank=True, null=True)
+    moderatorid = models.ForeignKey(Moderator,models.SET_NULL, blank=True, null=True)
     valide = models.BooleanField(default=False)
 
 
@@ -25,4 +25,4 @@ class commentArticle(models.Model):
     content = models.TextField()
     date = models.DateField(auto_now_add=True)
     mobileuserid = models.ForeignKey(MobileUser, related_name='comments', on_delete=models.CASCADE)
-    articleid = models.ForeignKey(Article, models.DO_NOTHING, related_name='comments', blank=True, null=True)
+    articleid = models.ForeignKey(Article,on_delete=models.CASCADE, related_name='comments', blank=True, null=True)

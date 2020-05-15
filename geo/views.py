@@ -12,7 +12,7 @@ from rest_framework.utils import json
 from rest_framework.views import APIView
 
 from .models import Countries, Regions, infectedRegions, receptionCenter
-from .permissions import IsAgentOrReadOnly, AdminOnly, IsNotAuthenticated, OwnerOnly, AgentOnly, AgentOnly_Object
+from .permissions import IsAgentOrReadOnly, AdminOnly, IsNotAuthenticated,ModeratorOnly, OwnerOnly, AgentOnly, AgentOnly_Object
 from .serializers import HistoryInfectedRegionSerializer, CountrySerializer, RegionSerializer, infectedRegionSerializer, DetailCountrySerializer
 
 import sys
@@ -123,6 +123,18 @@ class RegionDetail(APIView):
         serializer = RegionSerializer(region)
         return Response(serializer.data)
 
+    def patch(self, request, pk, format=None):
+        data = {}
+        article = self.get_object(id)
+        data['valide'] = True
+        data['moderatorid'] = request.user.moderator.id
+        serializer = ArticleSerializer(article, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 
@@ -182,3 +194,26 @@ class infectedRegionHistory(APIView):
         region = self.get_object(regionid)
         serializer = HistoryInfectedRegionSerializer(region)
         return Response(serializer.data)
+
+
+class ValidateInfectedRegion(APIView):
+  #only the moderator has the right to validate an infected region  
+
+  permission_classes = [IsAuthenticated, ModeratorOnly]
+  def get_object(self, id):
+    try:
+      return Article.objects.get(id=id)
+    except Article.DoesNotExist:
+      raise Http404
+
+
+  def patch(self, request, id, format=None):
+    data = {}
+    article = self.get_object(id)
+    data['valide'] = True
+    data['moderatorid'] = request.user.moderator.id
+    serializer = ArticleSerializer(article, data=data, partial=True)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

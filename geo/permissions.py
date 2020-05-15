@@ -10,6 +10,11 @@ class AgentOnly(BasePermission):
     def has_permission(self, request, view):
         return request.user.user_type == 2
 
+class ModeratorOnly(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.user_type == 1
+
+
 class IsNotAuthenticated(BasePermission):
     def has_permission(self, request, view):
         valide = request.user.is_authenticated
