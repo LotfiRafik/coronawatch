@@ -9,9 +9,18 @@ class CountrySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class RegionSerializer(serializers.ModelSerializer):
+
+    country_detail = serializers.SerializerMethodField()
+
     class Meta:
         model = Regions
         fields = '__all__'
+        extra_kwargs = {
+            'country': {'write_only': True},
+        }
+    def get_country_detail(self, instance):
+        country = Countries.objects.get(id=instance.country.id)
+        return CountrySerializer(country).data
 
 
 
@@ -35,15 +44,22 @@ class detailInfectSerializer(serializers.ModelSerializer):
     class Meta:
         model = infectedRegions
         exclude = ['id','valide','moderatorid','regionid']
+        
 
 class HistoryInfectedRegionSerializer(serializers.ModelSerializer):
     
     history = serializers.SerializerMethodField()
+    country_detail = serializers.SerializerMethodField()
 
     class Meta:
         model = Regions
-        exclude = ['riskvalide','riskmoderatorid']
+        exclude = ['riskvalide','riskmoderatorid','country']
 
     def get_history(self, instance):
         regions = infectedRegions.objects.filter(regionid=instance).order_by('-date')
         return detailInfectSerializer(regions, many=True).data
+ 
+    def get_country_detail(self, instance):
+        country = Countries.objects.get(id=instance.country.id)
+        return CountrySerializer(country).data
+    
