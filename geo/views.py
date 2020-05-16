@@ -13,7 +13,7 @@ from rest_framework.views import APIView
 
 from .models import Countries, Regions, infectedRegions, receptionCenter
 from .permissions import IsAgentOrReadOnly, AdminOnly, IsNotAuthenticated,ModeratorOnly, OwnerOnly, AgentOnly, AgentOnly_Object
-from .serializers import HistoryInfectedRegionSerializer, CountrySerializer, RegionSerializer, infectedRegionSerializer, DetailCountrySerializer
+from .serializers import HistoryInfectedRegionSerializer, CountrySerializer,RegionCountrySerializer, RegionSerializer, infectedRegionSerializer, DetailCountrySerializer
 
 import sys
 import datetime
@@ -120,7 +120,7 @@ class RegionDetail(APIView):
 
     def get(self, request, pk, format=None):
         region = self.get_object(pk)
-        serializer = RegionSerializer(region)
+        serializer = RegionCountrySerializer(region)
         return Response(serializer.data)
 
 
@@ -139,7 +139,7 @@ class DeclareRegionRisk(APIView):
     region = self.get_object(id)
     data['riskregion'] = True
     data['riskagentid'] = request.user.agent.id
-    serializer = RegionSerializer(region, data=data, partial=True)
+    serializer = RegionCountrySerializer(region, data=data, partial=True)
     if serializer.is_valid():
       serializer.save()
       return Response(serializer.data)
@@ -160,7 +160,7 @@ class IndeclareRegionRisk(APIView):
     region = self.get_object(id)
     data['riskregion'] = False
     data['riskagentid'] = request.user.agent.id
-    serializer = RegionSerializer(region, data=data, partial=True)
+    serializer = RegionCountrySerializer(region, data=data, partial=True)
     if serializer.is_valid():
       serializer.save()
       return Response(serializer.data)
@@ -182,7 +182,7 @@ class ValidateRegionRisk(APIView):
     region = self.get_object(id)
     data['riskvalide'] = True
     data['riskmoderatorid'] = request.user.moderator.id
-    serializer = RegionSerializer(region, data=data, partial=True)
+    serializer = RegionCountrySerializer(region, data=data, partial=True)
     if serializer.is_valid():
       serializer.save()
       return Response(serializer.data)
@@ -204,7 +204,7 @@ class InvalidateRegionRisk(APIView):
     region = self.get_object(id)
     data['riskvalide'] = False
     data['riskmoderatorid'] = request.user.moderator.id
-    serializer = RegionSerializer(region, data=data, partial=True)
+    serializer = RegionCountrySerializer(region, data=data, partial=True)
     if serializer.is_valid():
       serializer.save()
       return Response(serializer.data)
@@ -329,5 +329,6 @@ class InfectedRegionCountry(APIView):
     country = self.get_object(id)
     regions = Regions.objects.filter(country=country)
     infectedregions = infectedRegions.objects.filter(regionid__in=regions).distinct('regionid').order_by('regionid','-date')
+
     serializer = infectedRegionSerializer(infectedregions, many=True)
     return Response(serializer.data)

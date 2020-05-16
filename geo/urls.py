@@ -11,11 +11,11 @@ urlpatterns = [
     #GET country detail
     path('country/<int:pk>/', CountryDetail.as_view()),
 
-    #GET  infected region of a country
+    #GET  infected regions of a country
     path('country/<int:id>/infectedregions', InfectedRegionCountry.as_view()),
 
-    #GET region list, POST new region
-    path('region/', RegionList.as_view()),
+    # #GET region list, POST new region
+    # path('region/', RegionList.as_view()),
 
     #GET region detail
     path('region/<int:pk>/', RegionDetail.as_view()),
