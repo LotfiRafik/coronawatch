@@ -11,7 +11,8 @@ class CountrySerializer(serializers.ModelSerializer):
 class RegionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Regions
-        exclude = ['riskmoderatorid']
+        fields = '__all__'
+
 
 
 class DetailCountrySerializer(serializers.ModelSerializer):
@@ -27,7 +28,7 @@ class infectedRegionSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = infectedRegions
-        exclude = ['id','moderatorid']
+        exclude = ['moderatorid']
 
 class detailInfectSerializer(serializers.ModelSerializer):
     
@@ -37,7 +38,12 @@ class detailInfectSerializer(serializers.ModelSerializer):
 
 class HistoryInfectedRegionSerializer(serializers.ModelSerializer):
     
-    history = detailInfectSerializer(many=True, read_only=True)  
+    history = serializers.SerializerMethodField()
+
     class Meta:
         model = Regions
         exclude = ['riskvalide','riskmoderatorid']
+
+    def get_history(self, instance):
+        regions = infectedRegions.objects.filter(regionid=instance).order_by('-date')
+        return detailInfectSerializer(regions, many=True).data

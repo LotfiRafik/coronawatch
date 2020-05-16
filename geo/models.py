@@ -41,6 +41,7 @@ class infectedRegions(models.Model):
     nb_confirmed = models.IntegerField()
 
 
+
 class receptionCenter(models.Model):
     name = models.CharField(max_length=255)
     adress = models.CharField(max_length=255)

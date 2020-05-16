@@ -171,6 +171,28 @@ class ValidateArticle(APIView):
       return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class InvalidateArticle(APIView):
+  #only the moderator has the right to invalidate an article 
+
+  permission_classes = [IsAuthenticated, ModeratorOnly]
+  def get_object(self, id):
+    try:
+      return Article.objects.get(id=id)
+    except Article.DoesNotExist:
+      raise Http404
+
+
+  def patch(self, request, id, format=None):
+    data = {}
+    article = self.get_object(id)
+    data['valide'] = False
+    data['moderatorid'] = request.user.moderator.id
+    serializer = ArticleSerializer(article, data=data, partial=True)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class ArtcileDetail(APIView):

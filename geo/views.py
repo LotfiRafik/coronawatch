@@ -123,16 +123,93 @@ class RegionDetail(APIView):
         serializer = RegionSerializer(region)
         return Response(serializer.data)
 
-    def patch(self, request, pk, format=None):
-        data = {}
-        article = self.get_object(id)
-        data['valide'] = True
-        data['moderatorid'] = request.user.moderator.id
-        serializer = ArticleSerializer(article, data=data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class DeclareRegionRisk(APIView):
+  #only the health agent has the right to declare a region as a risk agent 
+
+  permission_classes = [IsAuthenticated, AgentOnly]
+  def get_object(self, id):
+    try:
+      return Regions.objects.get(id=id)
+    except Regions.DoesNotExist:
+      raise Http404
+
+  def patch(self, request, id, format=None):
+    data = {}
+    region = self.get_object(id)
+    data['riskregion'] = True
+    data['riskagentid'] = request.user.agent.id
+    serializer = RegionSerializer(region, data=data, partial=True)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class IndeclareRegionRisk(APIView):
+  #only the health agent has the right to declare a region as a risk agent 
+
+  permission_classes = [IsAuthenticated, AgentOnly]
+  def get_object(self, id):
+    try:
+      return Regions.objects.get(id=id)
+    except Regions.DoesNotExist:
+      raise Http404
+
+  def patch(self, request, id, format=None):
+    data = {}
+    region = self.get_object(id)
+    data['riskregion'] = False
+    data['riskagentid'] = request.user.agent.id
+    serializer = RegionSerializer(region, data=data, partial=True)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ValidateRegionRisk(APIView):
+  #only the moderator has the right to validate 
+
+  permission_classes = [IsAuthenticated, ModeratorOnly]
+  def get_object(self, id):
+    try:
+      return Regions.objects.get(id=id)
+    except Regions.DoesNotExist:
+      raise Http404
+
+  def patch(self, request, id, format=None):
+    data = {}
+    region = self.get_object(id)
+    data['riskvalide'] = True
+    data['riskmoderatorid'] = request.user.moderator.id
+    serializer = RegionSerializer(region, data=data, partial=True)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class InvalidateRegionRisk(APIView):
+  #only the moderator has the right to validate 
+
+  permission_classes = [IsAuthenticated, ModeratorOnly]
+  def get_object(self, id):
+    try:
+      return Regions.objects.get(id=id)
+    except Regions.DoesNotExist:
+      raise Http404
+
+  def patch(self, request, id, format=None):
+    data = {}
+    region = self.get_object(id)
+    data['riskvalide'] = False
+    data['riskmoderatorid'] = request.user.moderator.id
+    serializer = RegionSerializer(region, data=data, partial=True)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
@@ -197,23 +274,60 @@ class infectedRegionHistory(APIView):
 
 
 class ValidateInfectedRegion(APIView):
-  #only the moderator has the right to validate an infected region  
+  #only the moderator has the right to validate 
 
   permission_classes = [IsAuthenticated, ModeratorOnly]
   def get_object(self, id):
     try:
-      return Article.objects.get(id=id)
-    except Article.DoesNotExist:
+      return infectedRegions.objects.get(id=id)
+    except infectedRegions.DoesNotExist:
       raise Http404
-
 
   def patch(self, request, id, format=None):
     data = {}
-    article = self.get_object(id)
+    infectedregion = self.get_object(id)
     data['valide'] = True
     data['moderatorid'] = request.user.moderator.id
-    serializer = ArticleSerializer(article, data=data, partial=True)
+    serializer = infectedRegionSerializer(infectedregion, data=data, partial=True)
     if serializer.is_valid():
       serializer.save()
       return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class InvalidateInfectedRegion(APIView):
+  #only the moderator has the right to invalidate 
+
+  permission_classes = [IsAuthenticated, ModeratorOnly]
+  def get_object(self, id):
+    try:
+      return infectedRegions.objects.get(id=id)
+    except infectedRegions.DoesNotExist:
+      raise Http404
+
+  def patch(self, request, id, format=None):
+    data = {}
+    infectedregion = self.get_object(id)
+    data['valide'] = False
+    data['moderatorid'] = request.user.moderator.id
+    serializer = infectedRegionSerializer(infectedregion, data=data, partial=True)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class InfectedRegionCountry(APIView):
+  #GET infected regions of country 6 for example
+  def get_object(self, id):
+    try:
+      return Countries.objects.get(id=id)
+    except Countries.DoesNotExist:
+      raise Http404
+
+  def get(self,request,id):
+    country = self.get_object(id)
+    regions = Regions.objects.filter(country=country)
+    infectedregions = infectedRegions.objects.filter(regionid__in=regions).distinct('regionid').order_by('regionid','-date')
+    serializer = infectedRegionSerializer(infectedregions, many=True)
+    return Response(serializer.data)

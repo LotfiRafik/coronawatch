@@ -1,5 +1,5 @@
 from django.urls import path
-from articles.views import attachmentArticleDetail,attachmentArticleView, ArticleList,ArtcileDetail,NewArticle,CommentArticleList,CommentArticleDetail,NewCommentArticle, ValidateArticle
+from articles.views import attachmentArticleDetail,InvalidateArticle,attachmentArticleView, ArticleList,ArtcileDetail,NewArticle,CommentArticleList,CommentArticleDetail,NewCommentArticle, ValidateArticle
 
 urlpatterns = [
 
@@ -33,5 +33,9 @@ urlpatterns = [
 
     #moderator validate an article (id) #PATCH
     path('<int:id>/validate/', ValidateArticle.as_view()),
+
+    #moderator Invalidate an article (id) #PATCH
+    path('<int:id>/invalidate/', InvalidateArticle.as_view()),
+    
     
     ]
