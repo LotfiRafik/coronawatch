@@ -1,22 +1,29 @@
+import datetime
+import sys
+
 import requests
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.hashers import make_password
+from django.db.models import F, Max, Sum
 from django.http import Http404, HttpResponseForbidden
-from django.db.models import Max,F
 
 from rest_framework import status
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.utils import json
 from rest_framework.views import APIView
 
 from .models import Countries, Regions, infectedRegions, receptionCenter
-from .permissions import IsAgentOrReadOnly, AdminOnly, IsNotAuthenticated,ModeratorOnly, OwnerOnly, AgentOnly, AgentOnly_Object
-from .serializers import HistoryInfectedRegionSerializer, CountrySerializer,RegionCountrySerializer, RegionSerializer, infectedRegionSerializer, DetailCountrySerializer
+from .permissions import (AdminOnly, AgentOnly, AgentOnly_Object,
+                          IsAgentOrReadOnly, IsNotAuthenticated, ModeratorOnly,
+                          OwnerOnly)
+from .serializers import (CountrySerializer, DetailCountrySerializer,
+                          HistoryInfectedRegionSerializer,
+                          RegionCountrySerializer, RegionSerializer,
+                          TotalStatsSerializer, infectedRegionSerializer)
 
-import sys
-import datetime
 # Create your views here.
 
 
@@ -213,6 +220,18 @@ class InvalidateRegionRisk(APIView):
 
 
 
+class InfectedRegionWithHistoryList(APIView):
+  
+  def get(self, request, format=None):
+    if request.user.is_authenticated and request.user.user_type == 1:
+      #only the moderator who can see all infected regions even not valide  
+      infectedregions = infectedRegions.objects.all().order_by('-date')
+    else:
+      infectedregions = infectedRegions.objects.filter(valide=True).order_by('-date')
+    serializer = infectedRegionSerializer(infectedregions, many=True)
+    return Response(serializer.data)
+
+
 
 
 #only the agent can insert an infected region
@@ -220,9 +239,13 @@ class InfectedRegionList(APIView):
   permission_classes = [IsAgentOrReadOnly]
   
   def get(self, request, format=None):
+    if request.user.is_authenticated and request.user.user_type == 1:
+      #only the moderator who can see all infected regions even not valide  
       infectedregions = infectedRegions.objects.all().distinct('regionid').order_by('regionid','-date')
-      serializer = infectedRegionSerializer(infectedregions, many=True)
-      return Response(serializer.data)
+    else:
+      infectedregions = infectedRegions.objects.filter(valide=True).distinct('regionid').order_by('regionid','-date')
+    serializer = infectedRegionSerializer(infectedregions, many=True)
+    return Response(serializer.data)
 
 
   def post(self,request):
@@ -269,7 +292,8 @@ class infectedRegionHistory(APIView):
 
     def get(self, request, regionid, format=None):
         region = self.get_object(regionid)
-        serializer = HistoryInfectedRegionSerializer(region)
+
+        serializer = HistoryInfectedRegionSerializer(region,context={'request': request})
         return Response(serializer.data)
 
 
@@ -328,7 +352,55 @@ class InfectedRegionCountry(APIView):
   def get(self,request,id):
     country = self.get_object(id)
     regions = Regions.objects.filter(country=country)
-    infectedregions = infectedRegions.objects.filter(regionid__in=regions).distinct('regionid').order_by('regionid','-date')
-
+    if request.user.is_authenticated and request.user.user_type == 1:
+      #only the moderator who can see all infected regions even not valide  
+      infectedregions = infectedRegions.objects.filter(regionid__in=regions).distinct('regionid').order_by('regionid','-date')
+    else:
+      infectedregions = infectedRegions.objects.filter(regionid__in=regions,valide=True).distinct('regionid').order_by('regionid','-date')
     serializer = infectedRegionSerializer(infectedregions, many=True)
     return Response(serializer.data)
+
+
+
+@api_view(http_method_names=['GET'])
+def total_world(request):
+
+    if request.method == 'GET':
+      if request.user.is_authenticated and request.user.user_type == 1:
+        #only the moderator who can see all infected regions even not valide  
+        c = infectedRegions.objects.all().distinct('regionid').order_by('regionid','-date')
+      else:
+        c = infectedRegions.objects.filter(valide=True).distinct('regionid').order_by('regionid','-date')
+      results = infectedRegions.objects.filter(id__in=c).aggregate(Sum('nb_death'),Sum('nb_recovered'),Sum('nb_notyetsick'),Sum('nb_suspected'),Sum('nb_confirmed'))
+      print(results)
+      serializer = TotalStatsSerializer(results)
+      return Response(serializer.data)
+
+
+@api_view(http_method_names=['GET'])
+def total_country(request,pk):
+  
+  try:
+    country = Countries.objects.get(id=pk)
+  except Countries.DoesNotExist:
+    raise Http404
+  
+  regions = Regions.objects.filter(country=country)
+  
+  if request.user.is_authenticated and request.user.user_type == 1:
+    #only the moderator who can see all infected regions even not valide  
+    c = infectedRegions.objects.filter(regionid__in=regions).distinct('regionid').order_by('regionid','-date')
+  else:
+    c = infectedRegions.objects.filter(regionid__in=regions,valide=True).distinct('regionid').order_by('regionid','-date')
+  results = infectedRegions.objects.filter(id__in=c).aggregate(Sum('nb_death'),Sum('nb_recovered'),Sum('nb_notyetsick'),Sum('nb_suspected'),Sum('nb_confirmed'))
+  print(results)
+  serializer = TotalStatsSerializer(results)
+  return Response(serializer.data)
+
+
+
+
+
+
+
+

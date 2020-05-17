@@ -248,7 +248,7 @@ class InfectedRegionListTestCase(APITestCase):
         cls.infectedRegion = infectedRegions.objects.create(
                         nb_death=2,nb_recovered=2,regionid=cls.region,
                         agentid=cls.agent.agent,nb_notyetsick=5,
-                        nb_suspected=3,nb_confirmed=9
+                        nb_suspected=3,nb_confirmed=9,valide=True
                         )
         cls.nagent = User.objects.create(email="nagent@esi.dz",user_type=3,username="nagent")
         cls.token_nagent = Token.objects.get(user=cls.nagent).key
@@ -258,6 +258,11 @@ class InfectedRegionListTestCase(APITestCase):
     def test_get(self):
         response=self.client.get('/api/geo/infectedregion/')
         self.assertEqual(response.status_code,status.HTTP_200_OK)
+        print()
+        print("*****************************************************************************************")
+        print(response.data)
+        print("*****************************************************************************************")
+        print()
         #test that response has the correct data
         self.assertIn('nb_death',response.data[0])
         self.assertIn('nb_recovered',response.data[0])
@@ -271,7 +276,7 @@ class InfectedRegionListTestCase(APITestCase):
         self.assertEqual(response.data[0]['nb_death'],self.infectedRegion.nb_death)
         self.assertEqual(response.data[0]['nb_recovered'],self.infectedRegion.nb_recovered)
         self.assertEqual(response.data[0]['date'],str(datetime.date.today()))
-        self.assertFalse(response.data[0]['valide'])
+        self.assertTrue(response.data[0]['valide'])
         self.assertEqual(response.data[0]['nb_notyetsick'],self.infectedRegion.nb_notyetsick)
         self.assertEqual(response.data[0]['nb_suspected'],self.infectedRegion.nb_suspected)
         self.assertEqual(response.data[0]['nb_confirmed'],self.infectedRegion.nb_confirmed)
@@ -493,3 +498,85 @@ class InvalidateRegionRiskTestCase(APITestCase):
         #test that the response is correct
         self.assertFalse(response.data['riskvalide'])
 
+
+class statsTestCase(APITestCase):
+
+
+    @classmethod  # <- setUpClass doit être une méthode de classe, attention !
+    def setUpTestData(cls):
+        cls.agent = User.objects.create(email="agent@esi.dz",user_type=2,username="agent")
+        cls.country = Countries.objects.create(name="Algeria",code="dz")
+        cls.country2 = Countries.objects.create(name="France",code="fr")
+
+        cls.region = Regions.objects.create(
+            region_name="Blida",
+            code="09",
+            country=cls.country,
+            latitude=1.50,
+            longitude=43.50,
+            riskvalide=True,
+            riskregion=True
+            )
+        cls.newregion = Regions.objects.create(
+            region_name="Alger",
+            code="16",
+            country=cls.country,
+            latitude=1.50,
+            longitude=43.50,
+            riskvalide=True,
+            riskregion=True
+            )
+        cls.regionfr = Regions.objects.create(
+            region_name="Paris",
+            code="16",
+            country=cls.country2,
+            latitude=1.50,
+            longitude=43.50,
+            riskvalide=True,
+            riskregion=True
+            )
+        cls.infectedRegion = infectedRegions.objects.create(
+                        nb_death=2,nb_recovered=2,regionid=cls.region,
+                        agentid=cls.agent.agent,nb_notyetsick=5,
+                        nb_suspected=3,nb_confirmed=9,valide=True
+                        )
+        cls.infectedRegion = infectedRegions.objects.create(
+                        nb_death=2,nb_recovered=2,regionid=cls.newregion,
+                        agentid=cls.agent.agent,nb_notyetsick=5,
+                        nb_suspected=3,nb_confirmed=9,valide=True
+                        )
+        cls.infectedRegion = infectedRegions.objects.create(
+                        nb_death=2,nb_recovered=2,regionid=cls.regionfr,
+                        agentid=cls.agent.agent,nb_notyetsick=5,
+                        nb_suspected=3,nb_confirmed=9,valide=False
+                        )
+
+    def test_get_world_stats(self):
+        response=self.client.get('/api/geo/worldstats/')
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        #test that response has the correct data
+        self.assertIn('nb_death__sum',response.data)
+        self.assertIn('nb_recovered__sum',response.data)
+        self.assertIn('nb_notyetsick__sum',response.data)
+        self.assertIn('nb_suspected__sum',response.data)
+        self.assertIn('nb_confirmed__sum',response.data)
+        self.assertEqual(response.data['nb_death__sum'],4)
+        self.assertEqual(response.data['nb_recovered__sum'],4)
+        self.assertEqual(response.data['nb_notyetsick__sum'],10)
+        self.assertEqual(response.data['nb_suspected__sum'],6)
+        self.assertEqual(response.data['nb_confirmed__sum'],18)
+
+    def test_get_country_stats(self):
+        response=self.client.get('/api/geo/country/'+str(self.country.id)+'/stats/')
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        #test that response has the correct data
+        self.assertIn('nb_death__sum',response.data)
+        self.assertIn('nb_recovered__sum',response.data)
+        self.assertIn('nb_notyetsick__sum',response.data)
+        self.assertIn('nb_suspected__sum',response.data)
+        self.assertIn('nb_confirmed__sum',response.data)
+        self.assertEqual(response.data['nb_death__sum'],4)
+        self.assertEqual(response.data['nb_recovered__sum'],4)
+        self.assertEqual(response.data['nb_notyetsick__sum'],10)
+        self.assertEqual(response.data['nb_suspected__sum'],6)
+        self.assertEqual(response.data['nb_confirmed__sum'],18)
