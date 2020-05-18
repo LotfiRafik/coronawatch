@@ -92,7 +92,7 @@ class RegionList(APIView):
         regions = Regions.objects.filter(riskregion=False)
       else:
         regions = Regions.objects.all()
-      serializer = RegionSerializer(regions, many=True)
+      serializer = RegionCountrySerializer(regions, many=True)
       return Response(serializer.data)
 
     def post(self,request):
