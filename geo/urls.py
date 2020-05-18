@@ -24,8 +24,8 @@ urlpatterns = [
     path('country/<int:pk>/stats/', total_country),
 
 
-    # #GET region list, POST new region
-    # path('region/', RegionList.as_view()),
+    #GET region list, POST new region
+    path('region/', RegionList.as_view()),
 
     #GET region detail
     path('region/<int:pk>/', RegionDetail.as_view()),

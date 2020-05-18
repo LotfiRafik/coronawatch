@@ -85,9 +85,15 @@ class RegionList(APIView):
     permission_classes = [IsAgentOrReadOnly]
 
     def get(self, request, format=None):
+      
+      if request.GET.get('riskregion',"") == "true":
+        regions = Regions.objects.filter(riskregion=True)
+      elif request.GET.get('riskregion',"") == "false":
+        regions = Regions.objects.filter(riskregion=False)
+      else:
         regions = Regions.objects.all()
-        serializer = RegionSerializer(regions, many=True)
-        return Response(serializer.data)
+      serializer = RegionSerializer(regions, many=True)
+      return Response(serializer.data)
 
     def post(self,request):
         print(request.headers)
