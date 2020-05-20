@@ -29,6 +29,10 @@ urlpatterns = [
 
     path('api/geo/', include('geo.urls')),
 
+    
+    path('api/video/', include('videosHomePage.urls')),
+
+
 
     path('apidoc/', get_schema_view(
         title="CoronaWatch",
