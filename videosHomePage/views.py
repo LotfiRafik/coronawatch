@@ -63,8 +63,9 @@ class VideoList(APIView):
         if isinstance(f, TemporaryUploadedFile):
           f = f.temporary_file_path()
         upload_file_cloudinary(f, video)
-      return Response({'url':'https://coronawatch.herokuapp.com/api/video/'+str(video.id)+'/'}, status=status.HTTP_201_CREATED)
-          
+        return Response({'url':'https://coronawatch.herokuapp.com/api/video/'+str(video.id)+'/'}, status=status.HTTP_201_CREATED)
+      return Response(data={"video":"not provided"},status=status.HTTP_400_BAD_REQUEST)
+
 
 
 #upload image or video to cloud

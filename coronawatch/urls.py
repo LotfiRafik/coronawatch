@@ -33,6 +33,8 @@ urlpatterns = [
     path('api/video/', include('videosHomePage.urls')),
 
 
+    path('api/report/', include('reporting.urls')),
+
 
     path('apidoc/', get_schema_view(
         title="CoronaWatch",
