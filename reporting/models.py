@@ -11,4 +11,3 @@ class Reports(models.Model):
     mobileuserid = models.ForeignKey(MobileUser, related_name='reports', on_delete=models.CASCADE)
     moderatorid = models.ForeignKey(Moderator, models.DO_NOTHING, blank=True, null=True)
     valide = models.BooleanField()
-

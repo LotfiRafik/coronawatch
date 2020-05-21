@@ -24,6 +24,11 @@ from .serializers import (CountrySerializer, DetailCountrySerializer,
                           RegionCountrySerializer, RegionSerializer,
                           TotalStatsSerializer, infectedRegionSerializer)
 
+
+
+
+
+import webbrowser
 # Create your views here.
 
 
@@ -404,9 +409,35 @@ def total_country(request,pk):
   return Response(serializer.data)
 
 
+@api_view(http_method_names=['GET'])
+def total_country(request,pk):
+  
+  try:
+    country = Countries.objects.get(id=pk)
+  except Countries.DoesNotExist:
+    raise Http404
+  
+  regions = Regions.objects.filter(country=country)
+  
+  if request.user.is_authenticated and request.user.user_type == 1:
+    #only the moderator who can see all infected regions even not valide  
+    c = infectedRegions.objects.filter(regionid__in=regions).distinct('regionid').order_by('regionid','-date')
+  else:
+    c = infectedRegions.objects.filter(regionid__in=regions,valide=True).distinct('regionid').order_by('regionid','-date')
+  results = infectedRegions.objects.filter(id__in=c).aggregate(Sum('nb_death'),Sum('nb_recovered'),Sum('nb_notyetsick'),Sum('nb_suspected'),Sum('nb_confirmed'))
+  print(results)
+  serializer = TotalStatsSerializer(results)
+  return Response(serializer.data)
 
 
 
 
 
+@api_view(http_method_names=['GET'])
+def test_geo(request,pk):
 
+  regions = Regions.objects.filter(country=pk)
+  for r in regions:
+    url = 'https://www.google.fr/maps/place/'+str(r.region_name)
+    webbrowser.open(url)
+    input()

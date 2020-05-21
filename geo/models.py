@@ -6,10 +6,8 @@ class Countries(models.Model):
     name = models.CharField(max_length=255)
     code = models.CharField(max_length=10)
 
-    # class Meta:
-    #     managed = False
-    #     db_table = 'countries'
-
+    def __str__(self):
+        return self.name
 
 class Regions(models.Model):
     region_name = models.CharField(max_length=255)
@@ -22,9 +20,8 @@ class Regions(models.Model):
     riskvalide = models.BooleanField(default=False,null=True)
     riskregion = models.BooleanField(default=False,null=True)
 
-    # class Meta:
-    #     managed = False
-    #     db_table = 'regions'
+    def __str__(self):
+        return self.region_name
 
 
 
@@ -39,6 +36,9 @@ class infectedRegions(models.Model):
     nb_notyetsick = models.IntegerField() 
     nb_suspected = models.IntegerField()
     nb_confirmed = models.IntegerField()
+
+    def __str__(self):
+        return self.regionid.region_name + " " + str(self.date)
 
 
 
