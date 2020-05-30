@@ -1,7 +1,7 @@
 import requests
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.hashers import make_password
-from django.http import Http404, HttpResponseForbidden
+from django.http import Http404, HttpResponseForbidden,HttpResponseBadRequest
 from rest_framework import parsers, renderers, status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -21,22 +21,29 @@ class GoogleSign(APIView):
 
     def auth2_google(self, request):
 
-        payload = {'access_token': request.data.get("google_access_token")}  # validate the token
-        r = requests.get('https://www.googleapis.com/oauth2/v2/userinfo', params=payload)
+        #payload = {'access_token': request.data.get("google_access_token")}  # validate the token
+        #url = "https://www.googleapis.com/oauth2/v2/userinfo"
+        payload = {'id_token': request.data.get("google_access_token")}  # validate the token
+        url = "https://oauth2.googleapis.com/tokeninfo"
+        r = requests.get(url, params=payload)
         data = json.loads(r.text)
         print(data)
         if 'error' in data:
-            raise HttpResponseForbidden
+            raise Http404
         return data
         
     def post(self, request):
-
+        
+        print(request.data)
         data = self.auth2_google(request)
         response = {}
         # create user if not exist
         try:
             user = User.objects.get(email=data['email'])
-            response['token'] = Token.objects.get(user=user).key
+            token = Token.objects.get(user=user).key
+            user = UserSerializer(user)
+            response = user.data.copy()
+            response.update({'token': token})
             return Response(response, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             # provider random default password
