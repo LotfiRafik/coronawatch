@@ -1,7 +1,13 @@
+import json
+import sys
+
 import requests
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.hashers import make_password
-from django.http import Http404, HttpResponseForbidden,HttpResponseBadRequest
+from django.http import (Http404, HttpResponseBadRequest,
+                         HttpResponseForbidden, JsonResponse)
+
+import facebook
 from rest_framework import parsers, renderers, status
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -11,7 +17,7 @@ from rest_framework.response import Response
 from rest_framework.schemas import ManualSchema
 from rest_framework.utils import json
 from rest_framework.views import APIView
-import sys
+
 from .models import *
 from .permissions import AdminOnly, IsNotAuthenticated, OwnerOnly
 from .serializers import EmailSignSerializer, UserSerializer
@@ -58,6 +64,8 @@ class GoogleSign(APIView):
                 user['username'] = data['name']
             else:
                 user['username'] = data['email']
+
+
             if 'given_name' in data:
                 user['first_name'] = data['given_name']
             if 'family_name' in data: 
@@ -434,3 +442,60 @@ class OwnerDetail(APIView):
     def get(self, request, format=None):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
+
+
+
+
+
+class FacebookSign(APIView):
+
+    def post(self,request):
+        """Function for login and register
+            :return:user info for authorization or error
+        """
+        access_token = request.data.get('facebook_access_token')
+        new_user = False
+        try:
+            graph = facebook.GraphAPI(access_token=access_token)
+            data = graph.get_object(
+                id='me',
+                fields='first_name, last_name, id, email')
+            print(data)
+        except facebook.GraphAPIError:
+            return Response({'error': 'Invalid data'},status=status.HTTP_400_BAD_REQUEST)
+
+        response = {}
+        # create user if not exist
+        try:
+            user = User.objects.get(email=data['email'])
+            token = Token.objects.get(user=user).key
+            user = UserSerializer(user)
+            response = user.data.copy()
+            response.update({'token': token})
+            return Response(response, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            # provider random default password
+            user = {}
+            user['email'] = data['email']
+            #only mobile user can signin with google 
+            user['user_type'] = 4
+            user['username'] = data['email']
+            if 'first_name' in data:
+                user['first_name'] = data['first_name']
+                user['username'] = data['first_name']
+            if 'last_name' in data: 
+                user['last_name'] = data['last_name']
+                user['username'] += '.' + data['last_name']
+            serializer = UserSerializer(data=user)
+            if serializer.is_valid():
+                user = serializer.save()
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            #Token has been created auto after saving user
+            token = Token.objects.get(user=user).key
+            user.set_password(token)
+            user.save()
+            user = UserSerializer(user)
+            response = user.data.copy()
+            response.update({'token': token})
+            return Response(response, status=status.HTTP_201_CREATED)

@@ -1,6 +1,6 @@
 from django.urls import path
 #from rest_framework.authtoken.views import obtain_auth_token
-from users.views import WebUsersList,AgentList,ModeratorList,RedactorList,MobileUserList, AdminList, OwnerDetail, ObtainAuthToken, UserDetail, UsersList, GoogleSign, EmailSign, AdminSign, AdminDetail,ModeratorDetail,AgentDetail,RedactorDetail,MobileDetail
+from users.views import WebUsersList,FacebookSign,AgentList,ModeratorList,RedactorList,MobileUserList, AdminList, OwnerDetail, ObtainAuthToken, UserDetail, UsersList, GoogleSign, EmailSign, AdminSign, AdminDetail,ModeratorDetail,AgentDetail,RedactorDetail,MobileDetail
 
 urlpatterns = [
     path('', UsersList.as_view()),
@@ -23,5 +23,7 @@ urlpatterns = [
     path('googlesign/', GoogleSign.as_view()),
     path('emailsign/', EmailSign.as_view()),
     path('adminsign/', AdminSign.as_view()),
-    path('login/', ObtainAuthToken.as_view())
+    path('login/', ObtainAuthToken.as_view()),
+    path('facebooksign/', FacebookSign.as_view()),
+
 ]
