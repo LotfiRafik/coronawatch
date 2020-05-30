@@ -20,7 +20,10 @@ from .serializers import EmailSignSerializer, UserSerializer
 class GoogleSign(APIView):
 
     def auth2_google(self, request):
-
+        print(request.headers)
+        sys.stdout.flush()
+        print(request.data)
+        sys.stdout.flush()
         #payload = {'access_token': request.data.get("google_access_token")}  # validate the token
         #url = "https://www.googleapis.com/oauth2/v2/userinfo"
         payload = {'id_token': request.data.get("google_access_token")}  # validate the token
