@@ -54,7 +54,15 @@ class GoogleSign(APIView):
             user['email'] = data['email']
             #only mobile user can signin with google 
             user['user_type'] = 4
-            user['username'] = data['email']
+            if 'name' in data:
+                user['username'] = data['name']
+            else:
+                user['username'] = data['email']
+            if 'given_name' in data:
+                user['first_name'] = data['given_name']
+            if 'family_name' in data: 
+                user['last_name'] = data['family_name']
+
             serializer = UserSerializer(data=user)
             if serializer.is_valid():
                 user = serializer.save()
