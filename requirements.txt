@@ -16,3 +16,4 @@ cloudinary
 rq
 django-rq
 django-cors-headers
+facebook-sdk
