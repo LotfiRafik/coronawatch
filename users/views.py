@@ -488,10 +488,8 @@ class FacebookSign(APIView):
             user['username'] = data['email']
             if 'first_name' in data:
                 user['first_name'] = data['first_name']
-                user['username'] = data['first_name']
             if 'last_name' in data: 
                 user['last_name'] = data['last_name']
-                user['username'] += '.' + data['last_name']
             serializer = UserSerializer(data=user)
             if serializer.is_valid():
                 user = serializer.save()
