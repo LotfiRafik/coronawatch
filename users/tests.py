@@ -143,3 +143,38 @@ class UserDetailTestCase(APITestCase):
         response=self.client.get('/api/users/'+str(self.globuser.id)+'/')
         self.assertEqual(response.status_code,status.HTTP_200_OK)
 
+
+class FacebookSignTestCase(APITestCase):
+
+    @classmethod  # <- setUpClass doit être une méthode de classe, attention !
+    def setUpTestData(cls):
+        cls.globuser = User(email="test@test.test",user_type=4,username="test")
+        cls.globuser.set_password("test")
+        cls.globuser.save()
+        cls.token_globuser = Token.objects.get(user=cls.globuser).key
+
+
+    @patch('users.views.FacebookSign.auth2_facebook')
+    def test_post_valide_facebook_token_new_user(self, mock_auth2_facebook):
+        mock_auth2_facebook.return_value = {'email':'gl_bouchafa@esi.dz'}
+
+        response = self.client.post("/api/users/facebooksign/")
+        #test if the user is created
+        self.assertEqual(response.status_code,status.HTTP_201_CREATED)
+        #test that response has the token of the user
+        self.assertIn('token',response.data)
+        #test that the password of the user is set to his token
+        self.assertTrue(self.client.login(username='gl_bouchafa@esi.dz', password=response.data['token']))
+    
+
+    @patch('users.views.FacebookSign.auth2_facebook')
+    def test_post_valide_facebook_token_user_exist(self, mock_auth2_facebook):
+        mock_auth2_facebook.return_value = {'email':self.globuser.email}
+
+        response = self.client.post("/api/users/facebooksign/")
+        #test if the user is retrieved
+        self.assertEqual(response.status_code,status.HTTP_200_OK)
+        #test that response has the token of the user
+        self.assertIn('token',response.data)
+        #test that token response equal the token of the user
+        self.assertEqual(self.token_globuser, response.data['token'])

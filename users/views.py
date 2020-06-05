@@ -449,12 +449,9 @@ class OwnerDetail(APIView):
 
 class FacebookSign(APIView):
 
-    def post(self,request):
-        """Function for login and register
-            :return:user info for authorization or error
-        """
+    def auth2_facebook(self, request):
+        
         access_token = request.data.get('facebook_access_token')
-        new_user = False
         try:
             graph = facebook.GraphAPI(access_token=access_token)
             data = graph.get_object(
@@ -462,7 +459,16 @@ class FacebookSign(APIView):
                 fields='first_name, last_name, id, email')
             print(data)
         except facebook.GraphAPIError:
-            return Response({'error': 'Invalid data'},status=status.HTTP_400_BAD_REQUEST)
+            raise Http404            
+        return data
+
+    def post(self,request):
+        """Function for login and register
+            :return:user info for authorization or error
+        """
+
+        data = self.auth2_facebook(request)
+        print(data)
 
         response = {}
         # create user if not exist
