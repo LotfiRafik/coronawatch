@@ -17,6 +17,8 @@ import shutil
 import time
 import sys
 
+from django.core.mail import send_mail
+from users.models import User
 
 
 class ReportList(APIView):
@@ -134,6 +136,24 @@ class ValidateReport(APIView):
     serializer = ReportSerializer(report, data=data, partial=True)
     if serializer.is_valid():
       serializer.save()
+      list_email_ccc = []
+      ccc = User.objects.filter(user_type__in=(2,3))
+      for membre in ccc:
+        list_email_ccc.append(membre.email)
+      msg = "Utilisateur Mobile  :  " + str(report.mobileuserid.user.email)
+      msg += "\nINFORMATION SIGNALEMENT : \n"
+      msg += "Adresse :" + str(report.address)
+      msg += "\nsymptômes :" + str(report.symptoms) 
+      msg += "\nlatitude : " + str(report.latitude) 
+      msg += "\nlongitude : " + str(report.longitude) 
+      msg += "\nautre information : " + str(report.other_information) 
+      send_mail(
+        "[Coronawatch] Validation Signalement d'un cas suspect",
+        msg,
+        'coronawatch.daredev@gmail.com',
+        list_email_ccc,
+        fail_silently=False,
+      ) 
       return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -158,6 +178,25 @@ class InvalidateReport(APIView):
     serializer = ReportSerializer(report, data=data, partial=True)
     if serializer.is_valid():
       serializer.save()
+      list_email_ccc = []
+      ccc = User.objects.filter(user_type__in=(2,3))
+      for membre in ccc:
+        list_email_ccc.append(membre.email)
+      msg = "Utilisateur Mobile  :  " + str(report.mobileuserid.user.email)
+      msg += "\nINFORMATION SIGNALEMENT : \n"
+      msg += "Adresse :" + str(report.address)
+      msg += "\nsymptômes :" + str(report.symptoms) 
+      msg += "\nlatitude : " + str(report.latitude) 
+      msg += "\nlongitude : " + str(report.longitude) 
+      msg += "\nautre information : " + str(report.other_information) 
+      send_mail(
+        "[Coronawatch] Invalidation Signalement d'un cas suspect",
+        msg,
+        'coronawatch.daredev@gmail.com',
+        list_email_ccc,
+        fail_silently=False,
+      ) 
       return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
