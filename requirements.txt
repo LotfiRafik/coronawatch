@@ -17,3 +17,5 @@ rq
 django-rq
 django-cors-headers
 facebook-sdk
+google
+google-auth
