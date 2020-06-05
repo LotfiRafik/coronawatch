@@ -22,24 +22,41 @@ from .models import *
 from .permissions import AdminOnly, IsNotAuthenticated, OwnerOnly
 from .serializers import EmailSignSerializer, UserSerializer
 
+from google.oauth2 import id_token
+from google.auth.transport import requests
+
+
 
 class GoogleSign(APIView):
 
     def auth2_google(self, request):
-        print(request.headers)
-        sys.stdout.flush()
-        print(request.data)
-        sys.stdout.flush()
-        #payload = {'access_token': request.data.get("google_access_token")}  # validate the token
-        #url = "https://www.googleapis.com/oauth2/v2/userinfo"
-        payload = {'id_token': request.data.get("google_access_token")}  # validate the token
-        url = "https://oauth2.googleapis.com/tokeninfo"
-        r = requests.get(url, params=payload)
-        data = json.loads(r.text)
-        print(data)
-        if 'error' in data:
+        #CLIENT_ID = "407408718192.apps.googleusercontent.com"
+        CLIENT_ID = "1038582062348-8ad8vf7s4eo1cjk0skb21iojegonth0o.apps.googleusercontent.com"
+        try:
+            # Specify the CLIENT_ID of the app that accesses the backend:
+            idinfo = id_token.verify_oauth2_token(request.data["google_access_token"], requests.Request(), CLIENT_ID)
+            # if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+            #     raise ValueError('Wrong issuer.')
+            # ID token is valid. Get the user's Google Account ID from the decoded token.
+        except ValueError:
+            # Invalid token
             raise Http404
-        return data
+    
+        return idinfo
+        # print(request.headers)
+        # sys.stdout.flush()
+        # print(request.data)
+        # sys.stdout.flush()
+        # #payload = {'access_token': request.data.get("google_access_token")}  # validate the token
+        # #url = "https://www.googleapis.com/oauth2/v2/userinfo"
+        # payload = {'id_token': request.data.get("google_access_token")}  # validate the token
+        # url = "https://oauth2.googleapis.com/tokeninfo"
+        # r = requests.get(url, params=payload)
+        # data = json.loads(r.text)
+        # print(data)
+        # if 'error' in data:
+        #     raise Http404
+        # return data
         
     def post(self, request):
         
@@ -49,6 +66,10 @@ class GoogleSign(APIView):
         # create user if not exist
         try:
             user = User.objects.get(email=data['email'])
+            #TODO
+            #if email exists and its not a mobile profile block access 
+            if user.user_type != 4:
+                return Response({"Profile":"This user has a web profile "},status=status.HTTP_403_FORBIDDEN)
             token = Token.objects.get(user=user).key
             user = UserSerializer(user)
             response = user.data.copy()
@@ -60,12 +81,7 @@ class GoogleSign(APIView):
             user['email'] = data['email']
             #only mobile user can signin with google 
             user['user_type'] = 4
-            if 'name' in data:
-                user['username'] = data['name']
-            else:
-                user['username'] = data['email']
-
-
+            user['username'] = data['email']
             if 'given_name' in data:
                 user['first_name'] = data['given_name']
             if 'family_name' in data: 
@@ -474,6 +490,10 @@ class FacebookSign(APIView):
         # create user if not exist
         try:
             user = User.objects.get(email=data['email'])
+            #TODO
+            #if email exists and its not a mobile profile block access 
+            if user.user_type != 4:
+                return Response({"Profile":"This user has a web profile "},status=status.HTTP_403_FORBIDDEN)
             token = Token.objects.get(user=user).key
             user = UserSerializer(user)
             response = user.data.copy()

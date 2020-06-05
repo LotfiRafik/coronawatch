@@ -16,7 +16,7 @@ class GoogleSignTestCase(APITestCase):
 
     @classmethod  # <- setUpClass doit être une méthode de classe, attention !
     def setUpTestData(cls):
-        cls.globuser = User(email="test@test.test",user_type=3,username="test")
+        cls.globuser = User(email="test@test.test",user_type=4,username="test")
         cls.globuser.set_password("test")
         cls.globuser.save()
         cls.token_globuser = Token.objects.get(user=cls.globuser).key
