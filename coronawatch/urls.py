@@ -35,6 +35,9 @@ urlpatterns = [
 
     path('api/report/', include('reporting.urls')),
 
+    
+    path('api/robot/', include('robots.urls')),
+
 
     path('apidoc/', get_schema_view(
         title="CoronaWatch",

@@ -10,8 +10,8 @@ class RobotsContent(models.Model):
     source_type = models.PositiveSmallIntegerField(choices=SOURCE_TYPE_CHOICES)
     url = models.CharField(max_length=255)
     date = models.DateField()
-    moderatorid = models.ForeignKey(Moderator, models.DO_NOTHING, blank=True, null=True)
-    valide = models.BooleanField()
+    moderatorid = models.ForeignKey(Moderator, models.SET_NULL, blank=True, null=True)
+    valide = models.BooleanField(default=False)
 
 
 class commentRobotsContent(models.Model):

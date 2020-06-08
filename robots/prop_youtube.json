@@ -1,0 +1,8 @@
+{
+    "q": [
+        "coronavirus",
+        "covid19"
+    ],
+    "maxResults": 10,
+    "order": "relevance"
+}
