@@ -1,5 +1,5 @@
 from django.urls import path
-from robots.views import (RobotContentList,YoutubeConfig, RobotContentDetail,ValidateRobotContent, InvalidateRobotContent)
+from robots.views import (CommentRobotList,CommentRobotDetail, RobotContentList,YoutubeConfig, RobotContentDetail,ValidateRobotContent, InvalidateRobotContent)
 
 
 urlpatterns = [
@@ -20,6 +20,14 @@ urlpatterns = [
     
     #moderator get,set youtube robot configuration
     path('config/youtube/',YoutubeConfig.as_view()),
+
+
+    #all comments of a Robot-content (id) or create new comment on that content #GET,POST
+    path('<int:id>/comments/',CommentRobotList.as_view()),
+
+    
+    #get comment detail     #GET/PUT/PATCH/DELETE
+    path('comments/<int:id>/',CommentRobotDetail.as_view()),
 
     
     ]

@@ -7,10 +7,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 
-
-from .models import RobotsContent
+import sys
+from .models import RobotsContent, commentRobotsContent
 from .permissions import *
-from .serializers import RobotContentSerializer,YoutubeConfigSerializer
+from .serializers import RobotContentSerializer,YoutubeConfigSerializer, CommentRobotSerializer
 import json
 # Create your views here.
 
@@ -22,6 +22,8 @@ class RobotContentList(APIView):
 
 
     def get(self,request):
+
+        #Parse request filters
         filters = {}
         if "source" in request.GET:
             if request.GET["source"] == "facebook":
@@ -130,3 +132,86 @@ class YoutubeConfig(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class CommentRobotList(APIView):
+    
+    permission_classes = [MobileUserOrReadOnly]
+
+    #GET comments of content id=5 for example
+    def get_object(self, id):
+      try:
+        return RobotsContent.objects.get(id=id)
+      except RobotsContent.DoesNotExist:
+        raise Http404
+
+
+    def get(self,request,id):
+        robotcontent = self.get_object(id)
+        serializer=CommentRobotSerializer(robotcontent.comments, many=True)
+        return Response(serializer.data)
+    
+    def post(self,request, id):
+        robotcontent=self.get_object(id)
+        if(robotcontent.valide):
+            print(request.data)
+            sys.stdout.flush()
+            #We cant modify directly request.data so we copy it
+            data = request.data.copy()
+            print(data)
+            sys.stdout.flush()
+            #Id of the mobileUser 
+            data['mobileuserid'] = request.user.mobileuser.id
+            data['robotcontentid'] = id
+            serializer=CommentRobotSerializer(data=data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class CommentRobotDetail(APIView):
+
+  #The owner of the comment only or moderator can delete the comment
+  permission_classes = [OwnerOrModerator]
+
+  def get_object(self, id):
+    try:
+      comment =  commentRobotsContent.objects.get(id=id)
+      if self.request.method != "GET":
+        self.check_object_permissions(self.request, comment.mobileuserid.user)
+      return comment
+    except commentRobotsContent.DoesNotExist:
+      raise Http404
+  
+  def get(self,request,id):
+    comment=self.get_object(id)
+    serializer=CommentRobotSerializer(comment)
+    return Response(serializer.data) 
+  
+  def delete(self,request,id):
+    comment=self.get_object(id)
+    comment.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+  def patch(self, request, id, format=None):
+    data = {}
+    comment=self.get_object(id)
+    #User can edit only the content of the comment 
+    data['content'] = request.data['content']
+    serializer = CommentRobotSerializer(comment, data=data, partial=True)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    
+    
+
+

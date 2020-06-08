@@ -18,4 +18,4 @@ class commentRobotsContent(models.Model):
     content = models.TextField()
     date = models.DateField(auto_now_add=True)
     mobileuserid = models.ForeignKey(MobileUser, on_delete=models.CASCADE)
-    robotcontentid = models.ForeignKey(RobotsContent, models.CASCADE, blank=True, null=True)
+    robotcontentid = models.ForeignKey(RobotsContent, on_delete=models.CASCADE, related_name='comments', blank=True, null=True)
