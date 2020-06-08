@@ -50,9 +50,9 @@ def running ():
             webbrowser.open("https://www.youtube.com/watch?v="+str(e["id"]["videoId"]))
             date_iso_format = e["snippet"]["publishedAt"].replace("Z","")
             date = datetime.fromisoformat(date_iso_format).date()
-            #p = RobotsContent(source_type=1, url=url, date=date, valide=False)
-            #p.save()
-            #print(p.date,"  ",p.url)
+            p = RobotsContent(source_type=1, url=url, date=date, valide=False)
+            p.save()
+            print(p.date,"  ",p.url)
         print("\nend \n")
 
     except requests.exceptions.HTTPError as err :
