@@ -4,9 +4,29 @@ from .models import Countries, Regions, infectedRegions, receptionCenter
 
 
 class CountrySerializer(serializers.ModelSerializer):
+    longitude = serializers.SerializerMethodField()
+    latitude = serializers.SerializerMethodField()
     class Meta:
         model = Countries
         fields = '__all__'
+
+    def get_longitude(self, instance):
+        region = Regions.objects.filter(country=instance)[:1]
+        try:
+            return region[0].longitude
+        except IndexError:
+            print(instance.id,instance.name)
+            return None
+    def get_latitude(self, instance):
+        region = Regions.objects.filter(country=instance)[:1]
+        try:
+            return region[0].latitude
+        except IndexError:
+            return None
+
+
+
+
 
 class RegionSerializer(serializers.ModelSerializer):
 

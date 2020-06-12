@@ -2,3 +2,4 @@ python3env/
 **/__pycache__/
 .vscode/
 .env
+latest.dump

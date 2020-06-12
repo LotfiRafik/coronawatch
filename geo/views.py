@@ -351,6 +351,24 @@ class InvalidateInfectedRegion(APIView):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+#TODO
+# get last infectedregion
+# {
+# select * from geo_infectedregions where date<'2020-05-16' order by  date  desc limit 1;
+# InfectedRegions.objects.filter(date__leq='2020-05-16').order_by(-date).limit(1)
+# }
+# add stats 
+# modifier infectedregion object
+# save
+# ______________________
+
+# 2020-01-01
+# 2020-01-02+
+# 2020-01-03-
+# 2020-01-04
+#data remove auto add now 
+# 2020-01-05
+
 
 class InfectedRegionCountry(APIView):
   #GET infected regions of country 6 for example
