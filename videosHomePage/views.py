@@ -21,7 +21,7 @@ import sys
 
 class VideoList(APIView):
 
-    permission_classes = [MobileUserOrReadOnly]
+    #permission_classes = [MobileUserOrReadOnly]
 
 
     def get(self,request):
@@ -45,6 +45,8 @@ class VideoList(APIView):
       data = request.POST.copy()
       print(data)
       sys.stdout.flush()
+
+      return Response(data={"test header":"test header"},status=status.HTTP_400_BAD_REQUEST)
       if "video" in request.FILES:
         #Id of the redactor 
         data['mobileuserid'] = request.user.mobileuser.id
