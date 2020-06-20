@@ -3,6 +3,6 @@
         "coronavirus",
         "covid 19"
     ],
-    "maxResults": 10,
+    "maxResults": 5,
     "order": "relevance"
 }
