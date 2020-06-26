@@ -131,6 +131,8 @@ class YoutubeConfig(APIView):
                 json.dump(serializer.data, f, ensure_ascii=False, indent=4)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
+            print(request.data)
+            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
