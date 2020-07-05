@@ -58,6 +58,7 @@ class ReportList(APIView):
       serializer = ReportSerializer(data=data)
       if not serializer.is_valid():
         print(serializer.errors)
+        sys.stdout.flush()
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
       #Save report in database
       report = serializer.save()

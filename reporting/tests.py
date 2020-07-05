@@ -55,14 +55,14 @@ class ReportListTestCase(APITestCase):
     #def test_post_with_attachment(self):
 
     
-    def test_post_without_attachment(self):
+    # def test_post_without_attachment(self):
 
-        data = {'symptoms':'TestCase','address':'Wearetestingamethodpost'}
-        token = Token.objects.get(user=self.user1).key
-        header = {}
-        header['Authorization'] = "Token "+ str(token)
-        response=self.client.post('/api/report/', data, HTTP_AUTHORIZATION=header['Authorization'])
-        self.assertEqual(response.status_code,status.HTTP_400_BAD_REQUEST)
+    #     data = {'symptoms':'TestCase','address':'Wearetestingamethodpost'}
+    #     token = Token.objects.get(user=self.user1).key
+    #     header = {}
+    #     header['Authorization'] = "Token "+ str(token)
+    #     response=self.client.post('/api/report/', data, HTTP_AUTHORIZATION=header['Authorization'])
+    #     self.assertEqual(response.status_code,status.HTTP_400_BAD_REQUEST)
 
 
 
