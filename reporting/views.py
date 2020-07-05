@@ -51,17 +51,17 @@ class ReportList(APIView):
       data = request.POST.copy()
       print(data)
       sys.stdout.flush()
+      #Id of the redactor 
+      data['mobileuserid'] = request.user.mobileuser.id
+      data['valide'] = False
+      data['moderatorid'] = None
+      serializer = ReportSerializer(data=data)
+      if not serializer.is_valid():
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+      #Save report in database
+      report = serializer.save()
       if "attachment" in request.FILES:
-        #Id of the redactor 
-        data['mobileuserid'] = request.user.mobileuser.id
-        data['valide'] = False
-        data['moderatorid'] = None
-        serializer = ReportSerializer(data=data)
-        if not serializer.is_valid():
-          print(serializer.errors)
-          return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        #Save report in database
-        report = serializer.save()
         #Upload attachments to the cloud
         f = request.FILES.get('attachment')
         print(f)
@@ -69,8 +69,7 @@ class ReportList(APIView):
         if isinstance(f, TemporaryUploadedFile):
           f = f.temporary_file_path()
         upload_file_cloudinary(f, report)
-        return Response({'url':'https://coronawatch.herokuapp.com/api/report/'+str(report.id)+'/'}, status=status.HTTP_201_CREATED)
-      return Response(data={"attachment":"not provided"},status=status.HTTP_400_BAD_REQUEST)
+      return Response({'url':'https://coronawatch.herokuapp.com/api/report/'+str(report.id)+'/'}, status=status.HTTP_201_CREATED)
 
 
 
