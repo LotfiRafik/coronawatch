@@ -11,21 +11,21 @@ Technological Stack:
 ##### Table of Contents  
 
 1. [Introduction](#intro)  
-2. [System Layers](#headers)  
-3. [Context](#headers)  
-4. [Terminology](#headers)  
-5. [Functional Requirements](#headers)  
-  5.1 [System Actors](#headers)  
+2. [System Layers](#sysl)  
+3. [Context](#ctx)  
+4. [Terminology](#term)  
+5. [Functional Requirements](#fr)  
+  5.1 [System Actors](#sysa)  
   5.2 [Specifications](#spec)  
     i) [Mobile Application](#mobileapp)  
     ii) [Web Application](#webapp)  
     iii) [Robots](#robots)  
-6. [Non-Functional/Technical Requirements](#headers)  
+6. [Non-Functional/Technical Requirements](#tr)  
 
 ## <a name="intro"/>1. Introduction  
 As part of the 2nd year CS SIL project, we were asked to to develop a system to monitor the global epidemic "Corona Virus".
 
-## <a name="headers"/>2. System Layers  
+## <a name="sysl"/>2. System Layers  
 The system is composed of the following layers:  
 | Layer        | Description   |
 | ------------- |:-------------:|
@@ -34,19 +34,19 @@ The system is composed of the following layers:
 |WEB CLIENT| A web client accessible by all moderators.    |
 |MOBILE CLIENT|The mobile client is the main application used by users.|
 
-## <a name="headers"/>3. Context    
+## <a name="ctx"/>3. Context    
 As part of the global alert launched by the WHO in January 2020, and for the sake of transparency and information flow, the Ministry of Health has created a crisis cell to manage the epidemic. This unit will be referred to as CCC in the rest of this document (Corona Virus Crisis Unit).  
 One of the first actions of the crisis cell is to recruit you to make a monitoring and information system on the epidemic through Android mobile applications. For the sake of time and urgency, the Kanban methodology will be applied and the tested and validated features will have to be deployed very quickly.  
 For the sake of urgency, the team could not develop detailed specifications. The specifications presented in this document are indicative and the company remains free to propose improvements to the existing functionalities.  
 
-## <a name="headers"/>4. Terminology  
+## <a name="term"/>4. Terminology  
 | Couche        | Description   |
 | ------------- |:-------------:|
 | CCC     | Corona Virus Crisis Unit |
 | WHO      | World Health Organization |
 
-## <a name="headers"/>5. Functional Requirements 
-## <a name="headers"/>5.1 System Actors
+## <a name="fr"/>5. Functional Requirements 
+## <a name="sysa"/>5.1 System Actors
 The system is used by the following actors:    
 * Moderator: an agent of the Ministry of Health who is in charge of content moderation.  
 * User: any user with access to the mobile application 
@@ -88,7 +88,7 @@ The following tables list the feature specifications. Priority ❶ is the highes
 | 3002      | The robot must extract the latest publications of YouTube videos on the theme    | 1   |
 | 3003      | The robot must extract the latest publications from websites whose list is set up    | 2   |  
 
-## <a name="headers"/>6. Non-Functional/Technical Requirements  
+## <a name="tr"/>6. Non-Functional/Technical Requirements  
 * The system must be developed on the basis of an SOA architecture.
 * The backend must be based on containers and Docker
 * The mobile application must have Arabic as its main language
